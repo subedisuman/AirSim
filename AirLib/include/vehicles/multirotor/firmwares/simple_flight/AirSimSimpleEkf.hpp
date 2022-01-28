@@ -14,6 +14,8 @@
 #include "AirSimSimpleEkfParams.hpp"
 #include "common/GeodeticConverter.hpp"       
 
+#include "AirSimSimpleEkfPod.hpp"
+
 #define EKF_GROUND_TRUTH_MEAS_DIRECTIVE 0
 #define EKF_BARO_DIRECTIVE 1
 #define EKF_MAGNETO_DIRECTIVE 1
@@ -74,6 +76,7 @@ namespace airlib
         // initialize filter
         void initializeFilter()
         {
+            AirSimEkfPod::hello();
             assignEkfMatrics();
             resetGlobalVariables();
         }

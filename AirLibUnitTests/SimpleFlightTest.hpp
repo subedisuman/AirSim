@@ -14,6 +14,8 @@
 
 #include "vehicles/multirotor/firmwares/simple_flight/SimpleFlightQuadXParams.hpp"
 
+#include "AirSimSimpleEkfPod.hpp"
+
 namespace msr
 {
 namespace airlib
@@ -35,6 +37,7 @@ namespace airlib
         virtual void run() override
         {
             std::cout << std::endl;
+            AirSimEkfPod::hello();
             auto clock = std::make_shared<SteppableClock>(3E-3f);
             // auto clock = std::make_shared<SteppableClock>(1E-1f);
             ClockFactory::get(clock);

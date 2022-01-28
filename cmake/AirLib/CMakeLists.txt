@@ -25,6 +25,13 @@ file(GLOB_RECURSE ${PROJECT_NAME}_sources
 
 add_library(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_sources})
 
+# added for iabg POD
+# >>
+add_subdirectory(${AIRSIM_ROOT}/../AirSimEkfPod ${AIRSIM_ROOT}/build_AirSimEkfPod)
+target_link_libraries(${PROJECT_NAME} AirSimEkfPod)
+target_include_directories(${PROJECT_NAME} PUBLIC "${AIRSIM_ROOT}/../AirSimEkfPod/include")
+# >>
+
 CommonTargetLink()
 target_link_libraries(${PROJECT_NAME} ${RPC_LIB})
 target_link_libraries(${PROJECT_NAME} MavLinkCom)
