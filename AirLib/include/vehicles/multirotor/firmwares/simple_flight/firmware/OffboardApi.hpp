@@ -60,7 +60,7 @@ public:
         detectLanding();
         detectTakingOff();
 
-        logEkfValues();
+        // logEkfValues();
     }
 
     /**************** IOffboardApi ********************/
