@@ -18,3 +18,5 @@ Packaged/
 
 # avoid checking uproject because this is usually just version change
 *.uproject
+*.code-workspace
+

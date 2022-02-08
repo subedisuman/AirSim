@@ -128,6 +128,9 @@ Unreal/Environments/Blocks/clean.sh
 mkdir -p Unreal/Environments/Blocks/Plugins
 rsync -a --delete Unreal/Plugins/AirSim Unreal/Environments/Blocks/Plugins
 
+cp ../AirSimEkfPod/*.hpp Unreal/Environments/Blocks/Plugins/AirSim/Source/AirLib/include/vehicles/multirotor/firmwares/simple_flight
+cp ../AirSimEkfPod/*.cpp Unreal/Environments/Blocks/Plugins/AirSim/Source/AirLib/include/vehicles/multirotor/firmwares/simple_flight
+
 set +x
 
 echo ""
