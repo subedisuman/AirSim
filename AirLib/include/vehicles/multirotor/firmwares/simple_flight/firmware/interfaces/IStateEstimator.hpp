@@ -8,10 +8,14 @@ namespace simple_flight
 class IStateEstimator
 {
 public:
+<<<<<<< HEAD
     bool checkEkfEnabled()
     {
         return ekf_enabled_;
     }
+=======
+    virtual bool checkEkfEnabled() const = 0;
+>>>>>>> origin/ekf
     virtual Axis3r getAngles() const = 0;
     virtual Axis3r getAngularVelocity() const = 0;
     virtual Axis3r getPosition() const = 0;
@@ -55,7 +59,12 @@ public:
     virtual simple_flight::Axis4r getTrueOrientation() const = 0;
     virtual simple_flight::KinematicsState getTrueKinematicsEstimated() const = 0;
 
+<<<<<<< HEAD
 public:
     bool ekf_enabled_;
+=======
+    virtual ~IStateEstimator() = default;
+
+>>>>>>> origin/ekf
 };
 }

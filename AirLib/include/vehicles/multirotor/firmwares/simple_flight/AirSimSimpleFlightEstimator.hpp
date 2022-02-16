@@ -34,6 +34,11 @@ namespace airlib
             environment_ = environment;
         }
 
+        virtual bool checkEkfEnabled() const override
+        {
+            return ekf_enabled_;
+        }
+
         virtual simple_flight::Axis3r getAngles() const override
         {
             if (ekf_enabled_) {
@@ -446,6 +451,10 @@ namespace airlib
         const Kinematics::State* kinematics_;
         const Environment* environment_;
         const simple_flight::IEkf* ekf_;
+<<<<<<< HEAD
+=======
+        const bool ekf_enabled_;
+>>>>>>> origin/ekf
     };
 }
 } //namespace
