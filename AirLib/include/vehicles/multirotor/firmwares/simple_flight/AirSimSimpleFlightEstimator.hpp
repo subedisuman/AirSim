@@ -20,9 +20,9 @@ namespace airlib
     {
     public:
         AirSimSimpleFlightEstimator(simple_flight::IEkf* ekf)
-        : ekf_(ekf)
+        : ekf_(ekf), ekf_enabled_(ekf_->checkEkfEnabled())
         {
-            ekf_enabled_ = ekf_->checkEkfEnabled();
+
         }
 
         virtual ~AirSimSimpleFlightEstimator(){}
@@ -451,10 +451,7 @@ namespace airlib
         const Kinematics::State* kinematics_;
         const Environment* environment_;
         const simple_flight::IEkf* ekf_;
-<<<<<<< HEAD
-=======
         const bool ekf_enabled_;
->>>>>>> origin/ekf
     };
 }
 } //namespace

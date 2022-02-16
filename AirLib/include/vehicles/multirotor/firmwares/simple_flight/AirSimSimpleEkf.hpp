@@ -12,7 +12,9 @@
 #include "AirSimSimpleEkfBase.hpp"
 #include "AirSimSimpleEkfModel.hpp"
 #include "AirSimSimpleEkfParams.hpp"
-#include "common/GeodeticConverter.hpp"       
+#include "common/GeodeticConverter.hpp"
+
+#include "AirSimSimpleEkfPod.hpp"
 
 #define AirSimSimpleEkf_GROUND_TRUTH_MEAS_DIRECTIVE 0
 #define AirSimSimpleEkf_PSEUDOMEAS_DIRECTIVE 1
