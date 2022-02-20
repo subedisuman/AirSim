@@ -105,6 +105,7 @@ protected: //additional interface for derived class
     virtual msr::airlib::VehicleApiBase* getVehicleApiBase() const;
     msr::airlib::Kinematics* getKinematics();
     msr::airlib::Environment* getEnvironment();
+    typedef msr::airlib::AirSimSettings AirSimSettings;
 
 public: //Unreal specific methods
     PawnSimApi(const Params& params);
@@ -151,7 +152,6 @@ private: //methods
     void setStartPosition(const FVector& position, const FRotator& rotator);
 
 private: //vars
-    typedef msr::airlib::AirSimSettings AirSimSettings;
     typedef msr::airlib::Environment Environment;
 
     Params params_;

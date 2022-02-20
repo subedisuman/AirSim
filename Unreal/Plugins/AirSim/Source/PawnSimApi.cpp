@@ -554,18 +554,14 @@ msr::airlib::Environment* PawnSimApi::getEnvironment()
 std::string PawnSimApi::getRecordFileLine(bool is_header_line) const
 {
     if (is_header_line) {
-        return "VehicleName\tTimeStamp\tPOS_X\tPOS_Y\tPOS_Z\tQ_W\tQ_X\tQ_Y\tQ_Z\t";
+        return "VehicleName\tTimeStamp\t";
     }
 
-    const auto* kinematics = getGroundTruthKinematics();
     const uint64_t timestamp_millis = static_cast<uint64_t>(clock()->nowNanos() / 1.0E6);
 
     std::ostringstream ss;
     ss << getVehicleName() << "\t";
     ss << timestamp_millis << "\t";
-    ss << kinematics->pose.position.x() << "\t" << kinematics->pose.position.y() << "\t" << kinematics->pose.position.z() << "\t";
-    ss << kinematics->pose.orientation.w() << "\t" << kinematics->pose.orientation.x() << "\t"
-       << kinematics->pose.orientation.y() << "\t" << kinematics->pose.orientation.z() << "\t";
 
     return ss.str();
 }

@@ -1,6 +1,7 @@
 #include "MultirotorPawnSimApi.h"
 #include "AirBlueprintLib.h"
 #include "vehicles/multirotor/MultiRotorParamsFactory.hpp"
+#include "vehicles/multirotor/firmwares/simple_flight/SimpleFlightApi.hpp"
 #include "UnrealSensors/UnrealSensorFactory.h"
 #include <exception>
 
@@ -183,3 +184,48 @@ MultirotorPawnSimApi::UpdatableObject* MultirotorPawnSimApi::getPhysicsBody()
     return multirotor_physics_body_->getPhysicsBody();
 }
 //*** End: UpdatableState implementation ***//
+
+std::string MultirotorPawnSimApi::getRecordFileLine(bool is_header_line) const
+{
+    std::ostringstream ss;
+    if (getVehicleSetting()->vehicle_type == "" || //default config
+        getVehicleSetting()->vehicle_type == AirSimSettings::kVehicleTypeSimpleFlight) {
+
+        std::string common_line = PawnSimApi::getRecordFileLine(is_header_line);
+        if (is_header_line) {
+            return common_line +
+                "POS_X\tPOS_Y\tPOS_Z\t" +
+                "TRUE_POS_X\tTRUE_POS_Y\tTRUE_POS_Z\tTRUE_VEL_X\tTRUE_VEL_Y\tTRUE_VEL_Z\tTRUE_Q_W\tTRUE_Q_X\tTRUE_Q_Y\tTRUE_Q_Z\tTRUE_ANGLE_ROLL\tTRUE_ANGLE_PITCH\tTRUE_ANGLE_YAW\t" +
+                "EKF_POS_X\tEKF_POS_Y\tEKF_POS_Z\tEKF_VEL_X\tEKF_VEL_Y\tEKF_VEL_Z\tEKF_Q_W\tEKF_Q_X\tEKF_Q_Y\tEKF_Q_Z\tEKF_ANGLE_ROLL\tEKF_ANGLE_PITCH\tEKF_ANGLE_YAW\t" +
+                "EKF_POS_X_VAR\tEKF_POS_Y_VAR\tEKF_POS_Z_VAR\tEKF_VEL_X_VAR\tEKF_VEL_Y_VAR\tEKF_VEL_Z_VAR\tEKF_Q_W_VAR\tEKF_Q_X_VAR\tEKF_Q_Y_VAR\tEKF_Q_Z_VAR\tEKF_ANGLE_ROLL_VAR\tEKF_ANGLE_PITCH_VAR\tEKF_ANGLE_YAW_VAR\t";
+        }
+
+        const SimpleFlightApi* simple_flight_vehicle_api = static_cast<const SimpleFlightApi*>(getVehicleApi());
+        const auto& kin_state = getVehicleApi()->getMultirotorState().kinematics_estimated;
+        const auto& true_kin_state = simple_flight_vehicle_api->getTrueKinematicsEstimated();
+        const auto& true_angles = simple_flight_vehicle_api->getTrueAngles();
+        const auto& ekf_state = simple_flight_vehicle_api->getEkfKinematicsEstimated();
+        const auto& ekf_state_variance = simple_flight_vehicle_api->getEkfStateVariance();
+
+        ss << common_line;
+        ss << kin_state.pose.position.x() << "\t" << kin_state.pose.position.y() << "\t" << kin_state.pose.position.z() << "\t";
+
+        ss << true_kin_state.pose.position.x() << "\t" << true_kin_state.pose.position.y() << "\t" << true_kin_state.pose.position.z() << "\t";
+        ss << true_kin_state.twist.linear.x() << "\t" << true_kin_state.twist.linear.y() << "\t" << true_kin_state.twist.linear.z() << "\t";
+        ss << true_kin_state.pose.orientation.w() << '\t' << true_kin_state.pose.orientation.x() << "\t" << true_kin_state.pose.orientation.y() << "\t" << true_kin_state.pose.orientation.z() << "\t";
+        ss << true_angles.x() << "\t" << true_angles.y() << "\t" << true_angles.z() << "\t";
+
+        ss << ekf_state.position.x() << "\t" << ekf_state.position.y() << "\t" << ekf_state.position.z() << "\t";
+        ss << ekf_state.linear_velocity.x() << "\t" << ekf_state.linear_velocity.y() << "\t" << ekf_state.linear_velocity.z() << "\t";
+        ss << ekf_state.orientation.w() << '\t' << ekf_state.orientation.x() << "\t" << ekf_state.orientation.y() << "\t" << ekf_state.orientation.z() << "\t";
+        ss << ekf_state.angles.x() << "\t" << ekf_state.angles.y() << "\t" << ekf_state.angles.z() << "\t";
+
+        ss << ekf_state_variance.position.x() << "\t" << ekf_state_variance.position.y() << "\t" << ekf_state_variance.position.z() << "\t";
+        ss << ekf_state_variance.linear_velocity.x() << "\t" << ekf_state_variance.linear_velocity.y() << "\t" << ekf_state_variance.linear_velocity.z() << "\t";
+        ss << ekf_state_variance.orientation.w() << '\t' << ekf_state_variance.orientation.x() << "\t" << ekf_state_variance.orientation.y() << "\t" << ekf_state_variance.orientation.z() << "\t";
+        ss << ekf_state_variance.angles.x() << "\t" << ekf_state_variance.angles.y() << "\t" << ekf_state_variance.angles.z() << "\t";
+
+    }
+
+    return ss.str();
+}
