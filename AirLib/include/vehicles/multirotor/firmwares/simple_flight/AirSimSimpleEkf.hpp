@@ -237,6 +237,9 @@ namespace airlib
             if (params_.fuse_gps) {
                 gpsUpdate();
             }
+            if (params_.fuse_pod) {
+                PODMeasurement();
+            }
 #if AirSimSimpleEkf_PSEUDOMEAS_DIRECTIVE == 1
             pseudoMeasurement();
 #else
