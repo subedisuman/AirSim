@@ -197,7 +197,21 @@ std::string MultirotorPawnSimApi::getRecordFileLine(bool is_header_line) const
                 "POS_X\tPOS_Y\tPOS_Z\t" +
                 "TRUE_POS_X\tTRUE_POS_Y\tTRUE_POS_Z\tTRUE_VEL_X\tTRUE_VEL_Y\tTRUE_VEL_Z\tTRUE_Q_W\tTRUE_Q_X\tTRUE_Q_Y\tTRUE_Q_Z\tTRUE_ANGLE_ROLL\tTRUE_ANGLE_PITCH\tTRUE_ANGLE_YAW\t" +
                 "EKF_POS_X\tEKF_POS_Y\tEKF_POS_Z\tEKF_VEL_X\tEKF_VEL_Y\tEKF_VEL_Z\tEKF_Q_W\tEKF_Q_X\tEKF_Q_Y\tEKF_Q_Z\tEKF_ANGLE_ROLL\tEKF_ANGLE_PITCH\tEKF_ANGLE_YAW\t" +
-                "EKF_POS_X_VAR\tEKF_POS_Y_VAR\tEKF_POS_Z_VAR\tEKF_VEL_X_VAR\tEKF_VEL_Y_VAR\tEKF_VEL_Z_VAR\tEKF_Q_W_VAR\tEKF_Q_X_VAR\tEKF_Q_Y_VAR\tEKF_Q_Z_VAR\tEKF_ANGLE_ROLL_VAR\tEKF_ANGLE_PITCH_VAR\tEKF_ANGLE_YAW_VAR\t";
+                "EKF_POS_X_VAR\tEKF_POS_Y_VAR\tEKF_POS_Z_VAR\tEKF_VEL_X_VAR\tEKF_VEL_Y_VAR\tEKF_VEL_Z_VAR\tEKF_Q_W_VAR\tEKF_Q_X_VAR\tEKF_Q_Y_VAR\tEKF_Q_Z_VAR\tEKF_ANGLE_ROLL_VAR\tEKF_ANGLE_PITCH_VAR\tEKF_ANGLE_YAW_VAR\t" +
+                "POD_LP_X\tPOD_LP_Y\tPOD_LP_Z\tPOD_LP_VAR_X\tPOD_LP_VAR_Y\tPOD_LP_VAR_Z\tPRED_ENT\t" +
+                "QUAT_NORM\t" +
+                "ACCEL_X\tACCEL_Y\tACCEL_Z\t" +
+                "GYRO_X\tGYRO_Y\tGYRO_Z\t" +
+                "GPS_POS_X\tGPS_POS_Y\tGPS_POS_Z\t" +
+                "GPS_VEL_X\tGPS_VEL_Y\tGPS_VEL_Z\t" +
+                "BARO_ALT\t" +
+                "MAG_X\tMAG_Y\tMAG_Z\t" +
+                "BIAS_ACCEL_X\tBIAS_ACCEL_Y\tBIAS_ACCEL_Z\t" +
+                "BIAS_GYRO_X\tBIAS_GYRO_Y\tBIAS_GYRO_Z\t" +
+                "BIAS_BARO\t" +
+                "BIAS_ACCEL_X_VAR\tBIAS_ACCEL_Y_VAR\tBIAS_ACCEL_Z_VAR\t" +
+                "BIAS_GYRO_X_VAR\tBIAS_GYRO_Y_VAR\tBIAS_GYRO_Z_VAR\t" +
+                "BIAS_BARO_VAR\t";
         }
 
         const SimpleFlightApi* simple_flight_vehicle_api = static_cast<const SimpleFlightApi*>(getVehicleApi());
@@ -206,6 +220,8 @@ std::string MultirotorPawnSimApi::getRecordFileLine(bool is_header_line) const
         const auto& true_angles = simple_flight_vehicle_api->getTrueAngles();
         const auto& ekf_state = simple_flight_vehicle_api->getEkfKinematicsEstimated();
         const auto& ekf_state_variance = simple_flight_vehicle_api->getEkfStateVariance();
+        const auto& ekf_meas = simple_flight_vehicle_api->getEkfMeasurements();
+        const auto& quaternion_norm = simple_flight_vehicle_api->getEkfOrientationNorm();
 
         ss << common_line;
         ss << kin_state.pose.position.x() << "\t" << kin_state.pose.position.y() << "\t" << kin_state.pose.position.z() << "\t";
@@ -224,6 +240,26 @@ std::string MultirotorPawnSimApi::getRecordFileLine(bool is_header_line) const
         ss << ekf_state_variance.linear_velocity.x() << "\t" << ekf_state_variance.linear_velocity.y() << "\t" << ekf_state_variance.linear_velocity.z() << "\t";
         ss << ekf_state_variance.orientation.w() << '\t' << ekf_state_variance.orientation.x() << "\t" << ekf_state_variance.orientation.y() << "\t" << ekf_state_variance.orientation.z() << "\t";
         ss << ekf_state_variance.angles.x() << "\t" << ekf_state_variance.angles.y() << "\t" << ekf_state_variance.angles.z() << "\t";
+
+        ss << ekf_meas.lp_center.x() << "\t" << ekf_meas.lp_center.y() << "\t" << ekf_meas.lp_center.z() << "\t";
+        ss << ekf_meas.lp_center_var.x() << "\t" << ekf_meas.lp_center_var.y() << "\t" << ekf_meas.lp_center_var.z() << "\t" << ekf_meas.predictive_entropy << "\t";
+
+        ss << quaternion_norm << "\t";
+
+        ss << ekf_meas.accel.x() << "\t" << ekf_meas.accel.y() << "\t" << ekf_meas.accel.z() << "\t";
+        ss << ekf_meas.gyro.x() << "\t" << ekf_meas.gyro.y() << "\t" << ekf_meas.gyro.z() << "\t";
+        ss << ekf_meas.gps_position.x() << "\t" << ekf_meas.gps_position.y() << "\t" << ekf_meas.gps_position.z() << "\t";
+        ss << ekf_meas.gps_velocity.x() << "\t" << ekf_meas.gps_velocity.y() << "\t" << ekf_meas.gps_velocity.z() << "\t";
+        ss << ekf_meas.baro_altitude << "\t";
+        ss << ekf_meas.magnetic_flux.x() << "\t" << ekf_meas.magnetic_flux.y() << "\t" << ekf_meas.magnetic_flux.z() << "\t";
+
+        ss << ekf_state.sensor_bias.accel.x() << "\t" << ekf_state.sensor_bias.accel.y() << "\t" << ekf_state.sensor_bias.accel.z() << "\t";
+        ss << ekf_state.sensor_bias.gyro.x() << "\t" << ekf_state.sensor_bias.gyro.y() << "\t" << ekf_state.sensor_bias.gyro.z() << "\t";
+        ss << ekf_state.sensor_bias.barometer << "\t";
+
+        ss << ekf_state_variance.sensor_bias.accel.x() << "\t" << ekf_state_variance.sensor_bias.accel.y() << "\t" << ekf_state_variance.sensor_bias.accel.z() << "\t";
+        ss << ekf_state_variance.sensor_bias.gyro.x() << "\t" << ekf_state_variance.sensor_bias.gyro.y() << "\t" << ekf_state_variance.sensor_bias.gyro.z() << "\t";
+        ss << ekf_state_variance.sensor_bias.barometer << "\t";
 
     }
 
