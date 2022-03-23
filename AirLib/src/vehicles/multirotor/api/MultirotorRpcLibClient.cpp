@@ -221,6 +221,11 @@ __pragma(warning(disable : 4239))
             static_cast<rpc::client*>(getClient())->call("setPositionControllerGains", kp, ki, kd, vehicle_name);
         }
 
+        void MultirotorRpcLibClient::setPODResults(const vector<float>& lp_center, const vector<float>& lp_center_var, const std::string& vehicle_name)
+        {
+            static_cast<rpc::client*>(getClient())->call("setPODResults", lp_center, lp_center_var, vehicle_name);
+        }
+
         bool MultirotorRpcLibClient::setSafety(SafetyEval::SafetyViolationType enable_reasons, float obs_clearance, SafetyEval::ObsAvoidanceStrategy obs_startegy,
                                                float obs_avoidance_vel, const Vector3r& origin, float xy_length, float max_z, float min_z, const std::string& vehicle_name)
         {
