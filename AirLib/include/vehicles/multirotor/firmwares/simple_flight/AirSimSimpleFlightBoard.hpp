@@ -9,6 +9,7 @@
 #include "firmware/interfaces/IBoard.hpp"
 #include "firmware/Params.hpp"
 #include "common/Common.hpp"
+#include "AirSimSimpleFlightCommon.hpp"
 #include "common/ClockFactory.hpp"
 #include "physics/Kinematics.hpp"
 
@@ -21,7 +22,7 @@ namespace airlib
     {
     public:
         AirSimSimpleFlightBoard(const simple_flight::Params* params, const MultiRotorParams* vehicle_params)
-            : params_(params), vehicle_params_(vehicle_params)
+            : params_(params), vehicle_params_(vehicle_params)//, pod_results_(simple_flight::PODResults::nan())
         {
             const std::string& imu_name = "";
             const std::string& barometer_name = "";
@@ -98,6 +99,39 @@ namespace airlib
             unused(color);
         }
 
+        virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<float>& semantic_uncertainty) override
+        {
+            // check validity and consistency
+            if (any_of(lp_center_val.begin(), lp_center_val.end(), [](const float& elem) { return elem == std::numeric_limits<float>::quiet_NaN(); })) {
+                return;
+            }
+            if (any_of(lp_center_var_val.begin(), lp_center_var_val.end(), [](const float& elem) { return elem == std::numeric_limits<float>::quiet_NaN(); })) {
+                return;
+            }
+            if (any_of(semantic_uncertainty.begin(), semantic_uncertainty.end(), [](const float& elem) { return elem == std::numeric_limits<float>::quiet_NaN(); })) {
+                return;
+            }
+
+            simple_flight::Axis3r lp_center = AirSimSimpleFlightCommon::toAxis3r(Vector3r(lp_center_val[0], lp_center_val[1], lp_center_val[2]));
+            simple_flight::Axis3r lp_center_var = AirSimSimpleFlightCommon::toAxis3r(Vector3r(lp_center_var_val[0], lp_center_var_val[1], lp_center_var_val[2]));
+            float predictive_entropy = semantic_uncertainty[0];
+
+            pod_results_ = simple_flight::PODResults(lp_center, lp_center_var, predictive_entropy, true);
+        }
+
+        virtual void readPODResultsAndReset(float lp_center[2], float lp_center_var[2], float predictive_entropy[1]) override
+        {
+            // read
+            lp_center[0] = pod_results_.lp_center.x();
+            lp_center[1] = pod_results_.lp_center.y();
+            lp_center_var[0] = pod_results_.lp_center_var.x();
+            lp_center_var[1] = pod_results_.lp_center_var.y();
+            predictive_entropy[0] = pod_results_.predictive_entropy;
+
+            // reset
+            pod_results_ = simple_flight::PODResults::nan();
+        }
+
         virtual void readAccel(float accel[3]) const override
         {
             const auto& linear_accel = VectorMath::transformToBodyFrame(kinematics_->accelerations.linear, kinematics_->pose.orientation);
@@ -121,6 +155,7 @@ namespace airlib
             motor_output_.assign(params_->motor.motor_count, 0);
             input_channels_.assign(params_->rc.channel_count, 0);
             is_connected_ = false;
+            pod_results_ = simple_flight::PODResults::nan();
         }
 
         virtual void update() override
@@ -148,6 +183,11 @@ namespace airlib
         virtual bool checkGpsIfNew() const override
         {
             return gps_->checkIfNew();
+        }
+
+        virtual bool checkPODResultsIfNew() const override
+        {
+            return pod_results_.is_valid_and_new;
         }
 
         virtual void readImuData(real_T accel[3], real_T gyro[3]) const override
@@ -264,6 +304,9 @@ namespace airlib
         const BarometerBase* barometer_ = nullptr;
         const MagnetometerBase* magnetometer_ = nullptr;
         const GpsBase* gps_ = nullptr;
+
+        // std::atomic<simple_flight::PODResults> pod_results_;
+        simple_flight::PODResults pod_results_;
 
     };
 }

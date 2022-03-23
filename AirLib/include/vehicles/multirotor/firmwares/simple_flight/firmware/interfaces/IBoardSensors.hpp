@@ -13,10 +13,15 @@ public:
     virtual bool checkBarometerIfNew() const = 0;
     virtual bool checkMagnetometerIfNew() const = 0;
     virtual bool checkGpsIfNew() const = 0;
+    virtual bool checkPODResultsIfNew() const = 0;
+
     virtual void readImuData(real_T accel[3], real_T gyro[3]) const = 0;
     virtual void readBarometerData(real_T* altitude) const = 0;
     virtual void readMagnetometerData(real_T mag[3]) const = 0;
     virtual void readGpsData(double geo[3], real_T vel[3]) const = 0;
+
+    virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<float>& semantic_uncertainty) = 0;
+    virtual void readPODResultsAndReset(float lp_center[2], float lp_center_var[2], float predictive_entropy[1]) = 0;
 
     virtual ~IBoardSensors() = default;
 };

@@ -62,6 +62,7 @@ namespace airlib
         void setAngleRateControllerGains(const vector<float>& kp, const vector<float>& ki, const vector<float>& kd, const std::string& vehicle_name = "");
         void setVelocityControllerGains(const vector<float>& kp, const vector<float>& ki, const vector<float>& kd, const std::string& vehicle_name = "");
         void setPositionControllerGains(const vector<float>& kp, const vector<float>& ki, const vector<float>& kd, const std::string& vehicle_name = "");
+        void setPODResults(const vector<float>& lp_center, const vector<float>& lp_center_var, const std::string& vehicle_name = "");
         void moveByRC(const RCData& rc_data, const std::string& vehicle_name = "");
 
         MultirotorState getMultirotorState(const std::string& vehicle_name = "");

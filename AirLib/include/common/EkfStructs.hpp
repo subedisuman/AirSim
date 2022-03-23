@@ -20,6 +20,11 @@ struct SensorMeasurements
     real_T baro_altitude;
 
     Vector3r magnetic_flux;
+
+    Vector3r lp_center;
+    Vector3r lp_center_var;
+
+    real_T predictive_entropy;
 };
 
 struct SensorBiases

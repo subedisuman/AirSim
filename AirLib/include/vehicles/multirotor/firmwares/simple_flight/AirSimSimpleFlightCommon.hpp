@@ -57,6 +57,9 @@ namespace airlib
             airlib_sensor_meas.gps_velocity = toVector3r(sensor_meas.gps_velocity);
             airlib_sensor_meas.magnetic_flux = toVector3r(sensor_meas.magnetic_flux);
             airlib_sensor_meas.baro_altitude = sensor_meas.baro_altitude;
+            airlib_sensor_meas.lp_center = toVector3r(sensor_meas.lp_center);
+            airlib_sensor_meas.lp_center_var = toVector3r(sensor_meas.lp_center_var);
+            airlib_sensor_meas.predictive_entropy = sensor_meas.predictive_entropy;
 
             return airlib_sensor_meas;
         }

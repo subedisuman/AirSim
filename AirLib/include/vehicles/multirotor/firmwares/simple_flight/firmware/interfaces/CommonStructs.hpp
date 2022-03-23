@@ -224,6 +224,11 @@ struct SensorMeasurements
     TReal baro_altitude;
 
     Axis3r magnetic_flux;
+
+    Axis3r lp_center;
+    Axis3r lp_center_var;
+
+    TReal predictive_entropy;
 };
 
 struct SensorBiases
@@ -243,6 +248,48 @@ struct EkfKinematicsState
     Axis3r linear_velocity;
 
     SensorBiases sensor_bias;
+};
+
+
+struct PODResults
+{
+    Axis3r lp_center;
+    Axis3r lp_center_var;
+    float predictive_entropy;
+    bool is_valid_and_new = false;
+    
+    PODResults()
+    {
+        lp_center = Axis3r( std::numeric_limits<float>::quiet_NaN(),
+                            std::numeric_limits<float>::quiet_NaN(),
+                            std::numeric_limits<float>::quiet_NaN());
+        lp_center_var = Axis3r( std::numeric_limits<float>::quiet_NaN(),
+                                std::numeric_limits<float>::quiet_NaN(),
+                                std::numeric_limits<float>::quiet_NaN());
+        predictive_entropy = std::numeric_limits<float>::quiet_NaN();
+        is_valid_and_new = false;
+    }
+
+    PODResults(const Axis3r& lp_center_val, const Axis3r& lp_center_var_val, float predictive_entropy_val, bool is_valid_and_new_val = false)
+    {
+        lp_center = lp_center_val;
+        lp_center_var = lp_center_var_val;
+        predictive_entropy = predictive_entropy_val;
+        is_valid_and_new = is_valid_and_new_val;
+    }
+
+    static PODResults nan()
+    {
+        static const PODResults nan(Axis3r( std::numeric_limits<float>::quiet_NaN(),
+                                            std::numeric_limits<float>::quiet_NaN(),
+                                            std::numeric_limits<float>::quiet_NaN()), 
+                                    Axis3r( std::numeric_limits<float>::quiet_NaN(),
+                                            std::numeric_limits<float>::quiet_NaN(),
+                                            std::numeric_limits<float>::quiet_NaN()),
+                                    std::numeric_limits<float>::quiet_NaN(),
+                                    false);
+        return nan;
+    }
 };
 
 enum class VehicleStateType

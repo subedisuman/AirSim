@@ -431,6 +431,11 @@ namespace airlib
             return firmware_->offboardApi().getStateEstimator().getEkfOrientationNorm();
         }
 
+        virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<float>& semantic_uncertainty) override
+        {
+            board_->setPODResults(lp_center_val, lp_center_var_val, semantic_uncertainty);
+        }
+
     private:
         //convert pitch, roll, yaw from -1 to 1 to PWM
         static uint16_t angleToPwm(float angle)
