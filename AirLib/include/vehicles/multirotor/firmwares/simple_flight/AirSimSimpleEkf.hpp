@@ -29,7 +29,7 @@ namespace airlib
     {
     public:
         // Constructor
-        AirSimSimpleEkf(const simple_flight::IBoard* board, simple_flight::ICommLink* comm_link, const AirSimSettings::EkfSetting* setting = nullptr)
+        AirSimSimpleEkf(simple_flight::IBoard* board, simple_flight::ICommLink* comm_link, const AirSimSettings::EkfSetting* setting = nullptr)
             : board_(board), comm_link_(comm_link) // commlink is only temporary here
         {
             params_.initializeParameters(setting);
@@ -590,6 +590,44 @@ namespace airlib
             error_covariance_ = P_corrected;
         }
 
+        void PODMeasurement()
+        {
+            if(!board_->checkPODResultsIfNew())
+                return;
+
+            float lp_center[2];
+            float lp_center_var[2];
+            float predictive_entropy[1];
+
+            if(predictive_entropy[0]>=0.85f)
+                return;
+
+            getPODResultsData(lp_center, lp_center_var, predictive_entropy);
+            Vector3r lp_center_vec = Vector3r(lp_center[0], lp_center[1], 0.0f);
+            Vector3r lp_center_var_vec = Vector3r(lp_center_var[0], lp_center_var[1], 0.0f);
+            // Vector3r lp_center_vec = Vector3r(250.0f, 270.0f, 0.0f);
+            // Vector3r lp_center_var_vec = Vector3r(100.0f, 100.0f, 0.0f);
+            simple_flight::VectorNXf states = states_;
+            simple_flight::MatrixNXxNXf error_covariance = error_covariance_;
+            AirSimEkfPod::PodUpdate(states, error_covariance, lp_center_vec, lp_center_var_vec);
+
+            // write in the global variables
+            for (int i = 0; i < 17; i++){
+                states_(i) = states(i);
+                // states_(i+3) = states(i+3);
+            }
+            error_covariance_ = error_covariance;
+            // for (int i = 0; i < 17; i++){
+            //     // if (i == 2) continue;
+            //     for (int j = 0; j < 17; j++){
+            //         // if (j == 2) continue;
+            //         error_covariance_(i, j) = error_covariance(i, j);
+            //         // error_covariance_(i, j) = error_covariance(i, j);
+            //     }
+            // }
+
+        }
+
         void eulerAnglesCovariancePropagation()
         {
             // extract the states
@@ -757,6 +795,27 @@ namespace airlib
             return true;
         }
 
+        // reads POD data
+        bool getPODResultsData(float lp_center[2], float lp_center_var[2], float predictive_entropy[1])
+        {
+
+        board_->readPODResultsAndReset(lp_center, lp_center_var, predictive_entropy);
+
+        // check if the signal has all data that is valid, else return false
+        // TODO: check if at least a subset of data is valid
+
+        // record the measurement signals
+        measurement_POD_(0) = lp_center[0];
+        measurement_POD_(1) = lp_center[1];
+        measurement_POD_(2) = 0.0f;
+        measurement_POD_(3) = lp_center_var[0];
+        measurement_POD_(4) = lp_center_var[1];
+        measurement_POD_(5) = 0.0f;
+        measurement_POD_(6) = predictive_entropy[0];
+
+        return true;
+        }
+
     private:
         struct ImuDataBuffer
         {
@@ -775,7 +834,7 @@ namespace airlib
         // Class attritubes
         // ---------------------------------------------------------------------
         FrequencyLimiter freq_limiter_;
-        const simple_flight::IBoard* board_;
+        simple_flight::IBoard* board_;
         simple_flight::ICommLink* comm_link_;
 
         const Kinematics::State* kinematics_;

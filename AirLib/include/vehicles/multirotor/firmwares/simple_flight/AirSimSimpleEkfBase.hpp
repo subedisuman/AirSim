@@ -31,6 +31,10 @@ namespace airlib
         {
             return measurement_;
         }
+        virtual const VectorMath::Vector7f& getPODMeasurements() const override
+        {
+            return measurement_POD_;
+        }
         virtual const simple_flight::MatrixNXxNXf& getEkfCovariance() const override
         {
             return error_covariance_;
@@ -54,6 +58,7 @@ namespace airlib
         simple_flight::MatrixNXxNXf error_covariance_;
         VectorMath::Matrix3x3f euler_angles_error_covariance_;
         VectorMath::Vector17f measurement_ = VectorMath::Vector17f::Zero();
+        VectorMath::Vector7f measurement_POD_ = VectorMath::Vector7f::Zero();
     };
 
 }

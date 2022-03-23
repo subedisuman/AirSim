@@ -17,6 +17,7 @@ namespace airlib
         bool fuse_gps = false;
         bool fuse_baro = false;
         bool fuse_mag = false;
+        bool fuse_pod = false;
 
         struct Gyroscope
         {
@@ -152,6 +153,10 @@ namespace airlib
             float mag_fusion = json.getBool("MagnetoFusion", Utils::nan<bool>());
             if (!std::isnan(mag_fusion)) {
                 fuse_mag = mag_fusion;
+            }
+            float pod_fusion = json.getBool("PodFusion", Utils::nan<bool>());
+            if (!std::isnan(pod_fusion)) {
+                fuse_pod = pod_fusion;
             }
             Settings imu_child;
             if (json.getChild("Imu", imu_child)){

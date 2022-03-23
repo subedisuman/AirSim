@@ -205,6 +205,7 @@ namespace airlib
         {
             simple_flight::SensorMeasurements ekf_measurements;
             auto ekf_measurements_vector = ekf_->getEkfMeasurements();
+            auto ekf_measurements_POD_vector = ekf_->getPODMeasurements();
 
             ekf_measurements.accel.x() = ekf_measurements_vector(0);
             ekf_measurements.accel.y() = ekf_measurements_vector(1);
@@ -222,6 +223,14 @@ namespace airlib
             ekf_measurements.magnetic_flux.x() = ekf_measurements_vector(13);
             ekf_measurements.magnetic_flux.y() = ekf_measurements_vector(14);
             ekf_measurements.magnetic_flux.z() = ekf_measurements_vector(15);
+
+            ekf_measurements.lp_center.x() = ekf_measurements_POD_vector(0);
+            ekf_measurements.lp_center.y() = ekf_measurements_POD_vector(1);
+            ekf_measurements.lp_center.z() = ekf_measurements_POD_vector(2);
+            ekf_measurements.lp_center_var.x() = ekf_measurements_POD_vector(3);
+            ekf_measurements.lp_center_var.y() = ekf_measurements_POD_vector(4);
+            ekf_measurements.lp_center_var.z() = ekf_measurements_POD_vector(5);
+            ekf_measurements.predictive_entropy = ekf_measurements_POD_vector(6);
 
             return ekf_measurements;
         }
