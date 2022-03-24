@@ -183,6 +183,16 @@ namespace airlib
             float HorzDistortionStrength = 0.002f;
         };
 
+        struct PixelFormatOverrideSetting
+        {
+            int pixel_format = 0;
+        };
+
+        struct UnrealEngineSetting
+        {
+            std::map<int, PixelFormatOverrideSetting> pixel_format_override_settings;
+        };
+
         struct CameraSetting
         {
             //nan means keep the default values set in components
@@ -192,6 +202,8 @@ namespace airlib
             GimbalSetting gimbal;
             std::map<int, CaptureSetting> capture_settings;
             std::map<int, NoiseSetting> noise_settings;
+
+            UnrealEngineSetting ue_setting;
 
             CameraSetting()
             {
@@ -451,7 +463,6 @@ namespace airlib
             //this should be done last because it depends on vehicles (and/or their type) we have
             loadRecordingSetting(settings_json);
             loadClockSettings(settings_json);
-
         }
 
         static void initializeSettings(const std::string& json_settings_text)
@@ -1042,6 +1053,32 @@ namespace airlib
             return gimbal;
         }
 
+        static void loadUnrealEngineSetting(const msr::airlib::Settings& settings_json, UnrealEngineSetting& ue_setting)
+        {
+            Settings ue_settings_json;
+            if (settings_json.getChild("UnrealEngine", ue_settings_json)) {
+                Settings pixel_format_override_settings_json;
+                ue_setting.pixel_format_override_settings.clear();
+
+                for (int i = 0; i < Utils::toNumeric(ImageType::Count); i++) {
+                    PixelFormatOverrideSetting pixel_format_setting;
+                    pixel_format_setting.pixel_format = 0; // EXPixelformat::PF_Unknown
+                    ue_setting.pixel_format_override_settings[i] = pixel_format_setting;
+                }
+
+                if (ue_settings_json.getChild("PixelFormatOverride", pixel_format_override_settings_json)) {
+                    for (size_t child_index = 0; child_index < pixel_format_override_settings_json.size(); ++child_index) {
+                        Settings pixel_format_child_json;
+                        if (pixel_format_override_settings_json.getChild(child_index, pixel_format_child_json)) {
+                            int image_type = pixel_format_child_json.getInt("ImageType", 0);
+                            PixelFormatOverrideSetting& pixel_format_setting = ue_setting.pixel_format_override_settings.at(image_type);
+                            pixel_format_setting.pixel_format = pixel_format_child_json.getInt("PixelFormat", 0); // default to EXPixelformat::PF_Unknown
+                        }
+                    }
+                }
+            }
+        }
+
         static CameraSetting createCameraSetting(const Settings& settings_json)
         {
             CameraSetting setting;
@@ -1054,6 +1091,8 @@ namespace airlib
             Settings json_gimbal;
             if (settings_json.getChild("Gimbal", json_gimbal))
                 setting.gimbal = createGimbalSetting(json_gimbal);
+
+            loadUnrealEngineSetting(settings_json, setting.ue_setting);
 
             return setting;
         }
@@ -1328,7 +1367,7 @@ namespace airlib
                     sensors[p.first] = p.second;
             }
         }
-        
+
         static std::shared_ptr<EkfSetting> createEkfSettings(bool enabled)
         {
             std::shared_ptr<EkfSetting> ekf_setting;

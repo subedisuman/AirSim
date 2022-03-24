@@ -20,3 +20,6 @@ Packaged/
 *.uproject
 *.code-workspace
 
+
+# avoid checking in MacOS XCode assets
+*.xcworkspace

@@ -57,7 +57,7 @@ namespace airlib
             std::unique_ptr<msr::airlib::Kinematics> kinematics;
             std::unique_ptr<msr::airlib::Environment> environment;
             Kinematics::State initial_kinematic_state = Kinematics::State::zero();
-            
+
             initial_kinematic_state.pose = Pose(Vector3r(1.0f, 2.0f, 3.0f), Quaternionr(1, 0, 0, 0));
             // states_(6) = 0.9961946f; // q0
             // states_(7) = 0.0f; // q1
@@ -73,16 +73,16 @@ namespace airlib
 
             Environment::State initial_environment;
             initial_environment.position = initial_kinematic_state.pose.position;
-            initial_environment.geo_point = GeoPoint(47.6415, -122.14, 121.173); // this becomes the home geo point with which ned to geo conversion takes place
+            initial_environment.geo_point = GeoPoint(47.6415, -122.14, 121.173f); // this becomes the home geo point with which ned to geo conversion takes place
             // initial_environment.geo_point.altitude = 0.0f; // do not set it equal to kinematics z, this value goes into home geo point and acts as the ref for kinematics z
             environment.reset(new Environment(initial_environment));
 
             // crete and initialize body and physics world
-            MultiRotorPhysicsBody vehicle(params.get(), api.get(), kinematics.get(), environment.get()); 
+            MultiRotorPhysicsBody vehicle(params.get(), api.get(), kinematics.get(), environment.get());
 
             std::vector<UpdatableObject*> vehicles = { &vehicle };
             std::unique_ptr<PhysicsEngineBase> physics_engine(new FastPhysicsEngine());
-            PhysicsWorld physics_world(std::move(physics_engine), vehicles);//, static_cast<uint64_t>(clock->getStepSize() * 1E9));
+            PhysicsWorld physics_world(std::move(physics_engine), vehicles); //, static_cast<uint64_t>(clock->getStepSize() * 1E9));
             // world.startAsyncUpdator(); called in the physics_world constructor
 
             // added by Suman, to fix calling update before reset https://github.com/microsoft/AirSim/issues/2773#issuecomment-703888477
@@ -90,7 +90,7 @@ namespace airlib
             // for the order of the reset see void MultirotorPawnSimApi::resetImplementation()
             api->setSimulatedGroundTruth(&kinematics.get()->getState(), environment.get());
             kinematics->reset(); // sets initial kinematics as current among other things
-            environment->reset(); 
+            environment->reset();
             api->reset();
 
             // set the vehicle as grounded, otherwise can not take off, needs to to be done after physics world construction!
@@ -105,7 +105,6 @@ namespace airlib
             std::string message;
             testAssert(api->isReady(message), message);
 
-
             Utils::getSetMinLogLevel(true, 100);
 
             std::ostringstream ss;
@@ -116,7 +115,7 @@ namespace airlib
             myfile << ">> Barometer and magnetometer update frequency: 50 Hz.\n";
             myfile << ">> GPS update frequency: 50 Hz with startup delay.\n\n";*/
             myfile << ">> timestamp (ms) \t GroundTruth altitude \t Estimated postiion (x,y,z) \n\n";
-            
+
             // enable api control
             api->enableApiControl(true);
             //checkStatusMsg(api.get(), &myfile);
@@ -152,7 +151,7 @@ namespace airlib
             //checkStatusMsg(api.get(), &myfile);
 
             clock->sleep_for(10.0f);
-            api->moveByAngleRatesZ(0.0f,  0.0f, 4.0f*M_PI/180, -1.53509f, 4.0f);
+            api->moveByAngleRatesZ(0.0f, 0.0f, 4.0f * M_PIf / 180, -1.53509f, 4.0f);
             clock->sleep_for(10.0f);
             // // // fly towards a waypoint
             api->moveToPosition(10, 0, -2, 0.5, 1E3, DrivetrainType::MaxDegreeOfFreedom, YawMode(true, 0), -1, 0);
@@ -186,12 +185,11 @@ namespace airlib
             // StateReporter reporter;
             // kinematics->reportState(reporter); // this writes the kinematics in reporter
             // std::cout << reporter.getOutput() << std::endl;
-            
+
             myfile.close();
 
             /*while (true) {
             }*/
-
         }
 
     private:
