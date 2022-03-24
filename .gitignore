@@ -407,3 +407,4 @@ PythonClient/docs/_build
 /AirLibUnitTests/figure*.pdf
 /AirLibUnitTests/other.txt
 build_AirSimEkfPod/
+Unreal/Environments/LandscapeMountains*
