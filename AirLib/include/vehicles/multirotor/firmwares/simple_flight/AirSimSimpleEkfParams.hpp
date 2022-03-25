@@ -50,6 +50,16 @@ namespace airlib
             real_T quaternion_norm_R = 0.00001f;
         } pseudo_meas;
 
+        struct ProbabilisticObjectDetection
+        {
+            float camera_f_x = 270.0f;
+            float camera_f_y = 270.0f;
+            float camera_c_x = 270.0f;
+            float camera_c_y = 270.0f;
+            float predictive_entropy_threshold = 0.85f;
+            Vector3r landing_pad_coordinate = Vector3r(0.0f, 0.0f, 2.0f);
+        } pod;
+
         struct InitialStatesStdErr
         {
             Vector3r position = Vector3r(5.0f, 5.0f, 5.0f);
@@ -121,11 +131,11 @@ namespace airlib
 
         void refreshAndUnitConversion()
         {
-            gyro.std_error = gyro.std_error * M_PI / 180; // deg/s to rad/s
-            initial_states_err.gyro_bias = initial_states_err.gyro_bias * M_PI / 180; // deg/s to rad/s
-            initial_states_std_err.gyro_bias = initial_states_std_err.gyro_bias * M_PI / 180; // deg/s to rad/s
+            gyro.std_error = gyro.std_error * M_PIf / 180; // deg/s to rad/s
+            initial_states_err.gyro_bias = initial_states_err.gyro_bias * M_PIf / 180; // deg/s to rad/s
+            initial_states_std_err.gyro_bias = initial_states_std_err.gyro_bias * M_PIf / 180; // deg/s to rad/s
 
-            initial_states_err.attitude = initial_states_err.attitude * M_PI / 180; //deg to rad
+            initial_states_err.attitude = initial_states_err.attitude * M_PIf / 180; //deg to rad
             initial_states_err.quaternion = VectorMath::toQuaternion(initial_states_err.attitude.y(),
                                                                      initial_states_err.attitude.x(),
                                                                      initial_states_err.attitude.z());
@@ -273,6 +283,20 @@ namespace airlib
                 };
                 readVector3r(initial_states_err_child, gyro_bias_str, initial_states_err.gyro_bias);
                 readRealT(initial_states_err_child, "BaroBias", initial_states_err.baro_bias);
+            }
+            Settings pod_child;
+            if (json.getChild("ProbabilisticObjectDetection", pod_child)) {
+                pod.camera_f_x = pod_child.getFloat("CameraFX", pod.camera_f_x);
+                pod.camera_f_y = pod_child.getFloat("CameraFY", pod.camera_f_y);
+                pod.camera_c_x = pod_child.getFloat("CameraCX", pod.camera_c_x);
+                pod.camera_c_y = pod_child.getFloat("CameraCY", pod.camera_c_y);
+                pod.predictive_entropy_threshold = pod_child.getFloat("PredictivEntropyThreshold", pod.predictive_entropy_threshold);
+                std::array<std::string, 3> pod_str = {
+                    "LandingPadX",
+                    "LandingPadY",
+                    "LandingPadZ"
+                };
+                readVector3r(pod_child, pod_str, pod.landing_pad_coordinate);
             }
         }
     };

@@ -580,32 +580,30 @@ namespace airlib
             float lp_center_var[2];
             float predictive_entropy[1];
 
-            if (predictive_entropy[0] >= 0.85f)
+            if (predictive_entropy[0] >= params_.pod.predictive_entropy_threshold)
                 return;
 
             getPODResultsData(lp_center, lp_center_var, predictive_entropy);
             Vector3r lp_center_vec = Vector3r(lp_center[0], lp_center[1], 0.0f);
             Vector3r lp_center_var_vec = Vector3r(lp_center_var[0], lp_center_var[1], 0.0f);
-            // Vector3r lp_center_vec = Vector3r(250.0f, 270.0f, 0.0f);
-            // Vector3r lp_center_var_vec = Vector3r(100.0f, 100.0f, 0.0f);
             simple_flight::VectorNXf states = states_;
             simple_flight::MatrixNXxNXf error_covariance = error_covariance_;
-            AirSimEkfPod::PodUpdate(states, error_covariance, lp_center_vec, lp_center_var_vec);
+            AirSimEkfPod::PodUpdate(
+                states,
+                error_covariance,
+                lp_center_vec,
+                lp_center_var_vec,
+                params_.pod.camera_f_x,
+                params_.pod.camera_f_y,
+                params_.pod.camera_c_x,
+                params_.pod.camera_c_y,
+                params_.pod.landing_pad_coordinate);
 
             // write in the global variables
             for (int i = 0; i < 17; i++) {
                 states_(i) = states(i);
-                // states_(i+3) = states(i+3);
             }
             error_covariance_ = error_covariance;
-            // for (int i = 0; i < 17; i++){
-            //     // if (i == 2) continue;
-            //     for (int j = 0; j < 17; j++){
-            //         // if (j == 2) continue;
-            //         error_covariance_(i, j) = error_covariance(i, j);
-            //         // error_covariance_(i, j) = error_covariance(i, j);
-            //     }
-            // }
         }
 
         void eulerAnglesCovariancePropagation()
