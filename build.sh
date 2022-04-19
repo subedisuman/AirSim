@@ -142,13 +142,21 @@ rsync -a --delete Unreal/Plugins/AirSim Unreal/Environments/Blocks/Plugins
 cp ../AirSimEkfPod/*.hpp Unreal/Environments/Blocks/Plugins/AirSim/Source/AirLib/include/vehicles/multirotor/firmwares/simple_flight
 cp ../AirSimEkfPod/*.cpp Unreal/Environments/Blocks/Plugins/AirSim/Source/AirLib/include/vehicles/multirotor/firmwares/simple_flight
 
-# Update LandscapeMountains 4.25 project
+# Update LandscapeMountains project
 Unreal/Environments/LandscapeMountains/clean.sh
 mkdir -p Unreal/Environments/LandscapeMountains/Plugins
 rsync -a --delete Unreal/Plugins/AirSim Unreal/Environments/LandscapeMountains/Plugins
 
 cp ../AirSimEkfPod/*.hpp Unreal/Environments/LandscapeMountains/Plugins/AirSim/Source/AirLib/include/vehicles/multirotor/firmwares/simple_flight
 cp ../AirSimEkfPod/*.cpp Unreal/Environments/LandscapeMountains/Plugins/AirSim/Source/AirLib/include/vehicles/multirotor/firmwares/simple_flight
+
+# Update LandscapeMountainsNew project
+# Unreal/Environments/LandscapeMountainsNew/clean.sh
+mkdir -p Unreal/Environments/LandscapeMountainsNew/Plugins
+rsync -a --delete Unreal/Plugins/AirSim Unreal/Environments/LandscapeMountainsNew/Plugins
+
+cp ../AirSimEkfPod/*.hpp Unreal/Environments/LandscapeMountainsNew/Plugins/AirSim/Source/AirLib/include/vehicles/multirotor/firmwares/simple_flight
+cp ../AirSimEkfPod/*.cpp Unreal/Environments/LandscapeMountainsNew/Plugins/AirSim/Source/AirLib/include/vehicles/multirotor/firmwares/simple_flight
 
 
 set +x
