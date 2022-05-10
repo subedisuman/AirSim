@@ -255,7 +255,7 @@ struct PODResults
 {
     Axis3r lp_center;
     Axis3r lp_center_var;
-    float predictive_entropy;
+    bool gps_denied;
     bool is_valid_and_new = false;
     
     PODResults()
@@ -266,15 +266,15 @@ struct PODResults
         lp_center_var = Axis3r( std::numeric_limits<float>::quiet_NaN(),
                                 std::numeric_limits<float>::quiet_NaN(),
                                 std::numeric_limits<float>::quiet_NaN());
-        predictive_entropy = std::numeric_limits<float>::quiet_NaN();
+        gps_denied = false;
         is_valid_and_new = false;
     }
 
-    PODResults(const Axis3r& lp_center_val, const Axis3r& lp_center_var_val, float predictive_entropy_val, bool is_valid_and_new_val = false)
+    PODResults(const Axis3r& lp_center_val, const Axis3r& lp_center_var_val, bool gps_denied_val, bool is_valid_and_new_val = false)
     {
         lp_center = lp_center_val;
         lp_center_var = lp_center_var_val;
-        predictive_entropy = predictive_entropy_val;
+        gps_denied = gps_denied_val;
         is_valid_and_new = is_valid_and_new_val;
     }
 
@@ -286,7 +286,7 @@ struct PODResults
                                     Axis3r( std::numeric_limits<float>::quiet_NaN(),
                                             std::numeric_limits<float>::quiet_NaN(),
                                             std::numeric_limits<float>::quiet_NaN()),
-                                    std::numeric_limits<float>::quiet_NaN(),
+                                    false,
                                     false);
         return nan;
     }

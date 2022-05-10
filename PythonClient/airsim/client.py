@@ -1513,7 +1513,6 @@ class MultirotorClient(VehicleClient, object):
             msgpackrpc.future.Future: future. call .join() to wait for method to finish. Example: client.METHOD().join()
         """
 
-<<<<<<< HEAD
         return self.client.call_async(
             "moveByVelocityZBodyFrame",
             vx,
@@ -1553,19 +1552,6 @@ class MultirotorClient(VehicleClient, object):
         yaw_mode=YawMode(),
         vehicle_name="",
     ):
-=======
-        return self.client.call_async('moveByVelocityZBodyFrame', vx, vy, z, duration, drivetrain, yaw_mode, vehicle_name)
-
-    def moveByAngleZAsync(self, pitch, roll, z, yaw, duration, vehicle_name = ''):
-        logging.warning("moveByAngleZAsync API is deprecated, use moveByRollPitchYawZAsync() API instead")
-        return self.client.call_async('moveByRollPitchYawZ', roll, -pitch, -yaw, z, duration, vehicle_name)
-
-    def moveByAngleThrottleAsync(self, pitch, roll, throttle, yaw_rate, duration, vehicle_name = ''):
-        logging.warning("moveByAngleThrottleAsync API is deprecated, use moveByRollPitchYawrateThrottleAsync() API instead")
-        return self.client.call_async('moveByRollPitchYawrateThrottle', roll, -pitch, -yaw_rate, throttle, duration, vehicle_name)
-
-    def moveByVelocityAsync(self, vx, vy, vz, duration, drivetrain = DrivetrainType.MaxDegreeOfFreedom, yaw_mode = YawMode(), vehicle_name = ''):
->>>>>>> origin/ekftest
         """
         Args:
             vx (float): desired velocity in world (NED) X axis

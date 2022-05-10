@@ -20,8 +20,9 @@ public:
     virtual void readMagnetometerData(real_T mag[3]) const = 0;
     virtual void readGpsData(double geo[3], real_T vel[3]) const = 0;
 
-    virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<float>& semantic_uncertainty) = 0;
-    virtual void readPODResultsAndReset(float lp_center[2], float lp_center_var[2], float predictive_entropy[1]) = 0;
+    virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<bool>& gps_denied) = 0;
+    virtual void readPODResultsAndReset(float lp_center[2], float lp_center_var[2], bool gps_denied[1]) = 0;
+    virtual bool checkIfGpsDenied() const = 0;
 
     virtual ~IBoardSensors() = default;
 };

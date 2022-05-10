@@ -794,18 +794,18 @@ class PODResults:
     """
 
     def __init__(
-        self, lp_center=Vector3r.nanVector3r, lp_center_var=Vector3r.nanVector3r, semantic_uncertainty=1
+        self, lp_center=Vector3r.nanVector3r, lp_center_var=Vector3r.nanVector3r, deny_gps=False
     ):
         self.lp_center = lp_center
         self.lp_center_var = lp_center_var
-        self.semantic_uncertainty = semantic_uncertainty
+        self.deny_gps = deny_gps
 
     def to_lists(self):
         return [self.lp_center.x_val, self.lp_center.y_val, self.lp_center.z_val], [
             self.lp_center_var.x_val,
             self.lp_center_var.y_val,
             self.lp_center_var.z_val,
-        ], [self.semantic_uncertainty]
+        ], [self.deny_gps]
 
 
 class MeshPositionVertexBuffersResponse(MsgpackMixin):

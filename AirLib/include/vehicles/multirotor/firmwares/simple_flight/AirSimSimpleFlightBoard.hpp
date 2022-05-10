@@ -99,8 +99,14 @@ namespace airlib
             unused(color);
         }
 
-        virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<float>& semantic_uncertainty) override
+        virtual bool checkIfGpsDenied() const override
         {
+            return gps_deny_trigger_;
+        }
+
+        virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<bool>& gps_denied_val) override
+        {
+            gps_deny_trigger_ = gps_denied_val[0];
             // check validity and consistency
             if (any_of(lp_center_val.begin(), lp_center_val.end(), [](const float& elem) { return elem == std::numeric_limits<float>::quiet_NaN(); })) {
                 return;
@@ -108,25 +114,21 @@ namespace airlib
             if (any_of(lp_center_var_val.begin(), lp_center_var_val.end(), [](const float& elem) { return elem == std::numeric_limits<float>::quiet_NaN(); })) {
                 return;
             }
-            if (any_of(semantic_uncertainty.begin(), semantic_uncertainty.end(), [](const float& elem) { return elem == std::numeric_limits<float>::quiet_NaN(); })) {
-                return;
-            }
 
             simple_flight::Axis3r lp_center = AirSimSimpleFlightCommon::toAxis3r(Vector3r(lp_center_val[0], lp_center_val[1], lp_center_val[2]));
             simple_flight::Axis3r lp_center_var = AirSimSimpleFlightCommon::toAxis3r(Vector3r(lp_center_var_val[0], lp_center_var_val[1], lp_center_var_val[2]));
-            float predictive_entropy = semantic_uncertainty[0];
 
-            pod_results_ = simple_flight::PODResults(lp_center, lp_center_var, predictive_entropy, true);
+            pod_results_ = simple_flight::PODResults(lp_center, lp_center_var, gps_deny_trigger_, true);
         }
 
-        virtual void readPODResultsAndReset(float lp_center[2], float lp_center_var[2], float predictive_entropy[1]) override
+        virtual void readPODResultsAndReset(float lp_center[2], float lp_center_var[2], bool gps_denied[1]) override
         {
             // read
             lp_center[0] = pod_results_.lp_center.x();
             lp_center[1] = pod_results_.lp_center.y();
             lp_center_var[0] = pod_results_.lp_center_var.x();
             lp_center_var[1] = pod_results_.lp_center_var.y();
-            predictive_entropy[0] = pod_results_.predictive_entropy;
+            gps_denied[0] = pod_results_.gps_denied;
 
             // reset
             pod_results_ = simple_flight::PODResults::nan();
@@ -302,6 +304,7 @@ namespace airlib
         const GpsBase* gps_ = nullptr;
 
         simple_flight::PODResults pod_results_;
+        bool gps_deny_trigger_ = false;
     };
 }
 } //namespace

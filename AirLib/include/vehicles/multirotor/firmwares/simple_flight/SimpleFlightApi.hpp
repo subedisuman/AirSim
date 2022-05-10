@@ -430,9 +430,9 @@ namespace airlib
             return firmware_->offboardApi().getStateEstimator().getEkfOrientationNorm();
         }
 
-        virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<float>& semantic_uncertainty) override
+        virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<bool>& gps_denied) override
         {
-            board_->setPODResults(lp_center_val, lp_center_var_val, semantic_uncertainty);
+            board_->setPODResults(lp_center_val, lp_center_var_val, gps_denied);
         }
 
     private:

@@ -92,11 +92,11 @@ namespace airlib
         virtual bool land(float timeout_sec);
         virtual bool goHome(float timeout_sec);
 
-        virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<float>& semantic_uncertainty)
+        virtual void setPODResults(const vector<float>& lp_center_val, const vector<float>& lp_center_var_val, const vector<bool>& gps_denied)
         {
             unused(lp_center_val);
             unused(lp_center_var_val);
-            unused(semantic_uncertainty);
+            unused(gps_denied);
         }
 
         virtual bool moveToGPS(float latitude, float longitude, float altitude, float velocity, float timeout_sec, DrivetrainType drivetrain,

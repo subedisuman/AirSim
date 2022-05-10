@@ -483,7 +483,7 @@ namespace airlib
         // GPS update
         void gpsUpdate()
         {
-            if (!board_->checkGpsIfNew())
+            if (!board_->checkGpsIfNew() || board_->checkIfGpsDenied())
                 return;
 
             float pos[3];
@@ -578,12 +578,10 @@ namespace airlib
 
             float lp_center[2];
             float lp_center_var[2];
-            float predictive_entropy[1];
+            bool gps_denied[1];
 
-            if (predictive_entropy[0] >= params_.pod.predictive_entropy_threshold)
-                return;
+            getPODResultsData(lp_center, lp_center_var, gps_denied);
 
-            getPODResultsData(lp_center, lp_center_var, predictive_entropy);
             Vector3r lp_center_vec = Vector3r(lp_center[0], lp_center[1], 0.0f);
             Vector3r lp_center_var_vec = Vector3r(lp_center_var[0], lp_center_var[1], 0.0f);
             simple_flight::VectorNXf states = states_;
@@ -774,10 +772,10 @@ namespace airlib
         }
 
         // reads POD data
-        bool getPODResultsData(float lp_center[2], float lp_center_var[2], float predictive_entropy[1])
+        bool getPODResultsData(float lp_center[2], float lp_center_var[2], bool gps_denied[1])
         {
 
-            board_->readPODResultsAndReset(lp_center, lp_center_var, predictive_entropy);
+            board_->readPODResultsAndReset(lp_center, lp_center_var, gps_denied);
 
             // check if the signal has all data that is valid, else return false
             // TODO: check if at least a subset of data is valid
@@ -789,7 +787,7 @@ namespace airlib
             measurement_POD_(3) = lp_center_var[0];
             measurement_POD_(4) = lp_center_var[1];
             measurement_POD_(5) = 0.0f;
-            measurement_POD_(6) = predictive_entropy[0];
+            measurement_POD_(6) = gps_denied[0];
 
             return true;
         }
