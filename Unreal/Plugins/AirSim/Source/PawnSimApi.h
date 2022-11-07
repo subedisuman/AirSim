@@ -21,6 +21,7 @@
 #include "common/common_utils/UniqueValueMap.hpp"
 
 #include "PawnEvents.h"
+#include "common/DekfSharedResource.hpp"
 
 class PawnSimApi : public msr::airlib::VehicleSimApiBase
 {
@@ -71,7 +72,7 @@ public: //types
     };
 
 public: //implementation of VehicleSimApiBase
-    virtual void initialize() override;
+    virtual void initialize(std::shared_ptr<DekfSharedResource> dekf_shared_res) override;
 
     virtual void resetImplementation() override;
     virtual void update() override;

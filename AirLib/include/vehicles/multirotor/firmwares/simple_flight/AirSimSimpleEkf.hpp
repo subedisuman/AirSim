@@ -28,8 +28,8 @@ namespace airlib
     {
     public:
         // Constructor
-        AirSimSimpleEkf(simple_flight::IBoard* board, simple_flight::ICommLink* comm_link, const AirSimSettings::EkfSetting* setting = nullptr)
-            : board_(board) // commlink is only temporary here
+        AirSimSimpleEkf(simple_flight::IBoard* board, simple_flight::ICommLink* comm_link, const AirSimSettings::EkfSetting* setting = nullptr, std::shared_ptr<DekfSharedResource> dekf_shared_res = nullptr)
+            : board_(board), dekf_shared_res_(dekf_shared_res) // commlink is only temporary here
         {
             params_.initializeParameters(setting);
             freq_limiter_.initialize(334); // physics engine and the imu refresh at period 3ms ~ 333.33Hz
@@ -811,6 +811,7 @@ namespace airlib
         // ---------------------------------------------------------------------
         FrequencyLimiter freq_limiter_;
         simple_flight::IBoard* board_;
+        std::shared_ptr<DekfSharedResource> dekf_shared_res_;
 
         const Kinematics::State* kinematics_;
         const Environment* environment_;

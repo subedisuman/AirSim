@@ -30,6 +30,11 @@ namespace airlib
             return std::unique_ptr<MultirotorApiBase>(new ArduCopterApi(this, connection_info_));
         }
 
+        virtual std::unique_ptr<MultirotorApiBase> createMultirotorApi(std::shared_ptr<DekfSharedResource> dekf_shared_res) override
+        {
+
+        }
+
     protected:
         virtual void setupParams() override
         {

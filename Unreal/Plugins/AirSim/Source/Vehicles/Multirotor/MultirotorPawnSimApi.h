@@ -25,7 +25,7 @@ public:
     typedef MultirotorPawnEvents::RotorActuatorInfo RotorActuatorInfo;
 
 public:
-    virtual void initialize() override;
+    virtual void initialize(std::shared_ptr<DekfSharedResource> dekf_shared_res) override;
 
     virtual ~MultirotorPawnSimApi() = default;
 

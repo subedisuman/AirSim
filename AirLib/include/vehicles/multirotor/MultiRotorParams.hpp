@@ -9,6 +9,7 @@
 #include "sensors/SensorCollection.hpp"
 #include "sensors/SensorFactory.hpp"
 #include "vehicles/multirotor/api/MultirotorApiBase.hpp"
+#include "common/DekfSharedResource.hpp"
 
 namespace msr
 {
@@ -61,6 +62,7 @@ namespace airlib
 
     public: //interface
         virtual std::unique_ptr<MultirotorApiBase> createMultirotorApi() = 0;
+        virtual std::unique_ptr<MultirotorApiBase> createMultirotorApi(std::shared_ptr<DekfSharedResource> dekf_shared_res) = 0;
 
         virtual ~MultiRotorParams() = default;
         virtual void initialize(const AirSimSettings::VehicleSetting* vehicle_setting)

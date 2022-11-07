@@ -31,7 +31,7 @@ namespace airlib
     {
 
     public:
-        SimpleFlightApi(const MultiRotorParams* vehicle_params, const AirSimSettings::VehicleSetting* vehicle_setting)
+        SimpleFlightApi(const MultiRotorParams* vehicle_params, const AirSimSettings::VehicleSetting* vehicle_setting, std::shared_ptr<DekfSharedResource> dekf_shared_res)
             : vehicle_params_(vehicle_params)
         {
             readSettings(*vehicle_setting);
@@ -43,7 +43,7 @@ namespace airlib
             board_.reset(new AirSimSimpleFlightBoard(&params_, vehicle_params_));
             comm_link_.reset(new AirSimSimpleFlightCommLink());
 
-            ekf_.reset(new AirSimSimpleEkf(board_.get(), comm_link_.get(), vehicle_setting->ekf_setting.get()));
+            ekf_.reset(new AirSimSimpleEkf(board_.get(), comm_link_.get(), vehicle_setting->ekf_setting.get(), dekf_shared_res));
             estimator_.reset(new AirSimSimpleFlightEstimator(ekf_.get()));
 
             //create firmware

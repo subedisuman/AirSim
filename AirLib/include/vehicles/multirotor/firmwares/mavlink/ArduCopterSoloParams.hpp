@@ -31,6 +31,10 @@ namespace airlib
 
             return api;
         }
+        virtual std::unique_ptr<MultirotorApiBase> createMultirotorApi(std::shared_ptr<DekfSharedResource> dekf_shared_res) override
+        {
+
+        }
 
         virtual void setupParams() override
         {

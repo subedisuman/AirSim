@@ -22,7 +22,7 @@ public:
     typedef msr::airlib::Pose Pose;
 
 public:
-    virtual void initialize() override;
+    virtual void initialize(std::shared_ptr<DekfSharedResource> dekf_shared_res) override;
     virtual ~CarPawnSimApi() = default;
 
     //VehicleSimApiBase interface

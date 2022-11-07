@@ -26,7 +26,11 @@ namespace airlib
 
         virtual std::unique_ptr<MultirotorApiBase> createMultirotorApi() override
         {
-            return std::unique_ptr<MultirotorApiBase>(new SimpleFlightApi(this, vehicle_setting_));
+
+        }
+        virtual std::unique_ptr<MultirotorApiBase> createMultirotorApi(std::shared_ptr<DekfSharedResource> dekf_shared_res) override
+        {
+            return std::unique_ptr<MultirotorApiBase>(new SimpleFlightApi(this, vehicle_setting_, dekf_shared_res));
         }
 
     protected:

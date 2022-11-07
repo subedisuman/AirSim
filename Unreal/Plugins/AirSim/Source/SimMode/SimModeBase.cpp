@@ -68,6 +68,8 @@ ASimModeBase::ASimModeBase()
     if (domain_rand_mat_finder.Succeeded()) {
         domain_rand_material_ = domain_rand_mat_finder.Object;
     }
+
+    dekf_shared_res_ = std::shared_ptr<DekfSharedResource>(new DekfSharedResource());
 }
 
 void ASimModeBase::toggleLoadingScreen(bool is_visible)
@@ -790,7 +792,7 @@ std::unique_ptr<PawnSimApi> ASimModeBase::createVehicleSimApi(
 {
     unused(pawn_sim_api_params);
     auto sim_api = std::unique_ptr<PawnSimApi>();
-    sim_api->initialize();
+    sim_api->initialize(dekf_shared_res_);
 
     return sim_api;
 }

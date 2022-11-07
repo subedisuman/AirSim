@@ -17,6 +17,7 @@
 #include "LoadingScreenWidget.h"
 #include "UnrealImageCapture.h"
 #include "SimModeBase.generated.h"
+#include "common/DekfSharedResource.hpp"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLevelLoaded);
 
@@ -206,6 +207,8 @@ private:
     std::vector<std::unique_ptr<msr::airlib::VehicleSimApiBase>> vehicle_sim_apis_;
     common_utils::UniqueValueMap<std::string, APIPCamera*> external_cameras_;
     std::unique_ptr<UnrealImageCapture> external_image_capture_;
+
+    std::shared_ptr<DekfSharedResource> dekf_shared_res_;
 
     UPROPERTY()
     TArray<AActor*> spawned_actors_; //keep refs alive from Unreal GC
