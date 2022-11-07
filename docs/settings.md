@@ -3,13 +3,13 @@
 ## Where are Settings Stored?
 AirSim is searching for the settings definition in the following order. The first match will be used:
 
-1. Looking at the (absolute) path specified by the `--settings` command line argument.
-For example, in Windows: `AirSim.exe --settings 'C:\path\to\settings.json'`
-In Linux `./Blocks.sh --settings '/home/$USER/path/to/settings.json'`
+1. Looking at the (absolute) path specified by the `-settings` command line argument.
+For example, in Windows: `AirSim.exe -settings="C:\path\to\settings.json"`
+In Linux `./Blocks.sh -settings="/home/$USER/path/to/settings.json"`
 
-2. Looking for a json document passed as a command line argument by the `--settings` argument.
-For example, in Windows: `AirSim.exe --settings '{"foo" : "bar"}'`
-In Linux `./Blocks.sh --settings '{"foo" : "bar"}'`
+2. Looking for a json document passed as a command line argument by the `-settings` argument.
+For example, in Windows: `AirSim.exe -settings={"foo":"bar"}`
+In Linux `./Blocks.sh -settings={"foo":"bar"}`
 
 3. Looking in the folder of the executable for a file called `settings.json`.
 This will be a deep location where the actual executable of the Editor or binary is stored.
@@ -51,6 +51,7 @@ Below are complete list of settings available along with their default values. I
   "ApiServerPort": 41451,
   "RecordUIVisible": true,
   "LogMessagesVisible": true,
+  "ShowLosDebugLines": false,
   "ViewMode": "",
   "RpcEnabled": true,
   "EngineSound": true,
@@ -321,7 +322,7 @@ The `CaptureSettings` determines how different image types such as scene, depth,
 For explanation of other settings, please see [this article](https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/AutomaticExposure/).
 
 ### NoiseSettings
-The `NoiseSettings` allows to add noise to the specified image type with a goal of simulating camera sensor noise, interference and other artifacts. By default no noise is added, i.e., `Enabled: false`. If you set `Enabled: true` then following different types of noise and interference artifacts are enabled, each can be further tuned using setting. The noise effects are implemented as shader created as post processing material in Unreal Engine called [CameraSensorNoise](https://github.com/Microsoft/AirSim/blob/master/Unreal/Plugins/AirSim/Content/HUDAssets/CameraSensorNoise.uasset).
+The `NoiseSettings` allows to add noise to the specified image type with a goal of simulating camera sensor noise, interference and other artifacts. By default no noise is added, i.e., `Enabled: false`. If you set `Enabled: true` then following different types of noise and interference artifacts are enabled, each can be further tuned using setting. The noise effects are implemented as shader created as post processing material in Unreal Engine called [CameraSensorNoise](https://github.com/Microsoft/AirSim/blob/main/Unreal/Plugins/AirSim/Content/HUDAssets/CameraSensorNoise.uasset).
 
 Demo of camera noise and interference simulation:
 
@@ -497,7 +498,7 @@ PX4 connection. See [Setting up PX4 Software-in-Loop](px4_sitl.md) for an exampl
 
 ### Using ArduPilot
 
-[ArduPilot](https://ardupilot.org/) Copter & Rover vehicles are supported in latest AirSim master & releases `v1.3.0` and later. For settings and how to use, please see [ArduPilot SITL with AirSim](https://ardupilot.org/dev/docs/sitl-with-airsim.html)
+[ArduPilot](https://ardupilot.org/) Copter & Rover vehicles are supported in latest AirSim main branch & releases `v1.3.0` and later. For settings and how to use, please see [ArduPilot SITL with AirSim](https://ardupilot.org/dev/docs/sitl-with-airsim.html)
 
 ## Other Settings
 

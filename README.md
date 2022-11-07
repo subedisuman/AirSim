@@ -1,3 +1,9 @@
+## AirSim announcement: This repository will be archived in the coming year 
+
+In 2017 Microsoft Research created AirSim as a simulation platform for AI research and experimentation. Over the span of five years, this research project has served its purpose—and gained a lot of ground—as a common way to share research code and test new ideas around aerial AI development and simulation. Additionally, time has yielded advancements in the way we apply technology to the real world, particularly through aerial mobility and autonomous systems. For example, drone delivery is no longer a sci-fi storyline—it’s a business reality, which means there are new needs to be met. We’ve learned a lot in the process, and we want to thank this community for your engagement along the way. 
+
+In the spirit of forward momentum, we will be releasing a new simulation platform in the coming year and subsequently archiving the original 2017 AirSim. Users will still have access to the original AirSim code beyond that point, but no further updates will be made, effective immediately. Instead, we will focus our efforts on a new product, Microsoft Project AirSim, to meet the growing needs of the aerospace industry. Project AirSim will provide an end-to-end platform for safely developing and testing aerial autonomy through simulation. Users will benefit from the safety, code review, testing, advanced simulation, and AI capabilities that are uniquely available in a commercial product. As we get closer to the release of Project AirSim, there will be learning tools and features available to help you migrate to the new platform and to guide you through the product. To learn more about building aerial autonomy with the new Project AirSim, visit [https://aka.ms/projectairsim](https://aka.ms/projectairsim).
+
 # Welcome to AirSim
 
 AirSim is a simulator for drones, cars and more, built on [Unreal Engine](https://www.unrealengine.com/) (we now also have an experimental [Unity](https://unity3d.com/) release). It is open-source, cross platform, and supports software-in-the-loop simulation with popular flight controllers such as PX4 & ArduPilot and hardware-in-loop with PX4 for physically and visually realistic simulations. It is developed as an Unreal plugin that can simply be dropped into any Unreal environment. Similarly, we have an experimental release for a Unity plugin.
@@ -29,7 +35,7 @@ Cars in AirSim
 
 ### macOS
 [![Build Status](https://github.com/microsoft/AirSim/actions/workflows/test_macos.yml/badge.svg)](https://github.com/microsoft/AirSim/actions/workflows/test_macos.yml)
-* [Build it](https://microsoft.github.io/AirSim/build_linux)
+* [Build it](https://microsoft.github.io/AirSim/build_macos)
 
 For more details, see the [use precompiled binaries](docs/use_precompiled.md) document. 
 
@@ -127,13 +133,16 @@ We also have an AirSim group on [Facebook](https://www.facebook.com/groups/12258
 
 ## What's New
 
-- [Python wrapper for Open AI gym interfaces.](https://github.com/microsoft/AirSim/pull/3215)
-- [Python wrapper for Event camera simulation](https://github.com/microsoft/AirSim/pull/3202)
-- [Voxel grid construction](https://github.com/microsoft/AirSim/pull/3209)
-- [Programmable camera distortion](https://github.com/microsoft/AirSim/pull/3039)
-- [Wind simulation](https://github.com/microsoft/AirSim/pull/2867)
-- [Azure development environment with documentation](https://github.com/microsoft/AirSim/pull/2816)
-- ROS wrapper for [multirotor](https://github.com/microsoft/AirSim/blob/master/docs/airsim_ros_pkgs.md) and [car](https://github.com/microsoft/AirSim/pull/2743).
+* [Cinematographic Camera](https://github.com/microsoft/AirSim/pull/3949)
+* [ROS2 wrapper](https://github.com/microsoft/AirSim/pull/3976)
+* [API to list all assets](https://github.com/microsoft/AirSim/pull/3940)
+* [movetoGPS API](https://github.com/microsoft/AirSim/pull/3746)
+* [Optical flow camera](https://github.com/microsoft/AirSim/pull/3938)
+* [simSetKinematics API](https://github.com/microsoft/AirSim/pull/4066)
+* [Dynamically set object textures from existing UE material or texture PNG](https://github.com/microsoft/AirSim/pull/3992)
+* [Ability to spawn/destroy lights and control light parameters](https://github.com/microsoft/AirSim/pull/3991)
+* [Support for multiple drones in Unity](https://github.com/microsoft/AirSim/pull/3128)
+* [Control manual camera speed through the keyboard](https://github.com/microsoft/AirSim/pulls?page=6&q=is%3Apr+is%3Aclosed+sort%3Aupdated-desc#:~:text=1-,Control%20manual%20camera%20speed%20through%20the%20keyboard,-%233221%20by%20saihv) 
 
 For complete list of changes, view our [Changelog](docs/CHANGELOG.md)
 

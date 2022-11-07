@@ -220,33 +220,34 @@ class VehicleClient:
             "simSwapTextures", tags, tex_id, component_id, material_id
         )
 
-    def simSetObjectMaterial(self, object_name, material_name):
+    def simSetObjectMaterial(self, object_name, material_name, component_id = 0):
         """
         Runtime Swap Texture API
         See https://microsoft.github.io/AirSim/retexturing/ for details
         Args:
             object_name (str): name of object to set material for
             material_name (str): name of material to set for object
+            component_id (int, optional) : index of material elements
 
         Returns:
             bool: True if material was set
         """
-        return self.client.call("simSetObjectMaterial", object_name, material_name)
+        return self.client.call("simSetObjectMaterial", object_name, material_name, component_id)
 
-    def simSetObjectMaterialFromTexture(self, object_name, texture_path):
+    def simSetObjectMaterialFromTexture(self, object_name, texture_path, component_id = 0):
         """
         Runtime Swap Texture API
         See https://microsoft.github.io/AirSim/retexturing/ for details
         Args:
             object_name (str): name of object to set material for
             texture_path (str): path to texture to set for object
+            component_id (int, optional) : index of material elements
 
         Returns:
             bool: True if material was set
         """
-        return self.client.call(
-            "simSetObjectMaterialFromTexture", object_name, texture_path
-        )
+        return self.client.call("simSetObjectMaterialFromTexture", object_name, texture_path, component_id)
+
 
     # time-of-day control
     # time - of - day control
@@ -2179,5 +2180,10 @@ class CarClient(VehicleClient, object):
         Returns:
             CarControls:
         """
+<<<<<<< HEAD
         controls_raw = self.client.call("getCarControls", vehicle_name)
         return CarControls.from_msgpack(controls_raw)
+=======
+        controls_raw = self.client.call('getCarControls', vehicle_name)
+        return CarControls.from_msgpack(controls_raw)
+>>>>>>> 6688d27d3712c2a9c824ababec7a2703475b6628
