@@ -12,9 +12,9 @@ CarPawnSimApi::CarPawnSimApi(const Params& params,
 {
 }
 
-void CarPawnSimApi::initialize(std::shared_ptr<DekfSharedResource> dekf_shared_res)
+void CarPawnSimApi::initialize()
 {
-    PawnSimApi::initialize(std::shared_ptr<DekfSharedResource> dekf_shared_res);
+    PawnSimApi::initialize();
 
     //create vehicle params
     std::shared_ptr<UnrealSensorFactory> sensor_factory = std::make_shared<UnrealSensorFactory>(getPawn(), &getNedTransform());

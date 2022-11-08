@@ -1,4 +1,5 @@
 #pragma once
+// #include "common/DekfSharedResource.hpp"
 
 #include "CoreMinimal.h"
 #include "Components/SkyLightComponent.h"
@@ -17,7 +18,6 @@
 #include "LoadingScreenWidget.h"
 #include "UnrealImageCapture.h"
 #include "SimModeBase.generated.h"
-#include "common/DekfSharedResource.hpp"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLevelLoaded);
 

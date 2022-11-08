@@ -32,7 +32,7 @@ namespace airlib
 
         virtual std::unique_ptr<MultirotorApiBase> createMultirotorApi(std::shared_ptr<DekfSharedResource> dekf_shared_res) override
         {
-
+            return nullptr;
         }
 
     protected:

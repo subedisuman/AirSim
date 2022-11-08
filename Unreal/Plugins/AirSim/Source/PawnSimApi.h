@@ -72,7 +72,8 @@ public: //types
     };
 
 public: //implementation of VehicleSimApiBase
-    virtual void initialize(std::shared_ptr<DekfSharedResource> dekf_shared_res) override;
+    void preinitialize(std::shared_ptr<DekfSharedResource> dekf_shared_res);
+    virtual void initialize() override;
 
     virtual void resetImplementation() override;
     virtual void update() override;
@@ -107,6 +108,7 @@ protected: //additional interface for derived class
     msr::airlib::Kinematics* getKinematics();
     msr::airlib::Environment* getEnvironment();
     typedef msr::airlib::AirSimSettings AirSimSettings;
+    std::shared_ptr<DekfSharedResource> dekf_shared_res_;
 
 public: //Unreal specific methods
     PawnSimApi(const Params& params);

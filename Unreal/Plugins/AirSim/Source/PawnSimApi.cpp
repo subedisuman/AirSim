@@ -19,7 +19,12 @@ PawnSimApi::PawnSimApi(const Params& params)
 {
 }
 
-void PawnSimApi::initialize(std::shared_ptr<DekfSharedResource> dekf_shared_res)
+void PawnSimApi::preinitialize(std::shared_ptr<DekfSharedResource> dekf_shared_res)
+{
+    dekf_shared_res_ = dekf_shared_res;
+}
+
+void PawnSimApi::initialize()
 {
     Kinematics::State initial_kinematic_state = Kinematics::State::zero();
 

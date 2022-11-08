@@ -19,7 +19,7 @@ void MultirotorPawnSimApi::initialize()
     //create vehicle API
     std::shared_ptr<UnrealSensorFactory> sensor_factory = std::make_shared<UnrealSensorFactory>(getPawn(), &getNedTransform());
     vehicle_params_ = MultiRotorParamsFactory::createConfig(getVehicleSetting(), sensor_factory);
-    vehicle_api_ = vehicle_params_->createMultirotorApi();
+    vehicle_api_ = vehicle_params_->createMultirotorApi(dekf_shared_res_);
     //setup physics vehicle
     multirotor_physics_body_ = std::unique_ptr<MultiRotor>(new MultiRotorPhysicsBody(vehicle_params_.get(), vehicle_api_.get(), getKinematics(), getEnvironment()));
     rotor_count_ = multirotor_physics_body_->wrenchVertexCount();

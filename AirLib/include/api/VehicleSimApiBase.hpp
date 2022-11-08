@@ -10,6 +10,7 @@
 #include "physics/Kinematics.hpp"
 #include "physics/Environment.hpp"
 #include "common/AirSimSettings.hpp"
+#include "common/DekfSharedResource.hpp"
 
 namespace msr
 {

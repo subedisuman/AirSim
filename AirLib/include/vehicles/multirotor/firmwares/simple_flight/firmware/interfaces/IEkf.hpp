@@ -15,10 +15,10 @@ public:
 
     // getters
     virtual const VectorNXf& getEkfStates() const = 0;
-    virtual const VectorMath::Vector17f& getEkfMeasurements() const = 0;
-    virtual const VectorMath::Vector7f& getPODMeasurements() const = 0;
+    virtual const VectorNXf& getEkfMeasurements() const = 0;
+    virtual const msr::airlib::VectorMath::Vector7f& getPODMeasurements() const = 0;
     virtual const MatrixNXxNXf& getEkfCovariance() const = 0;
-    virtual const VectorMath::Matrix3x3f& getEkfEulerAnglesCovariance() const = 0;
+    virtual const msr::airlib::VectorMath::Matrix3x3f& getEkfEulerAnglesCovariance() const = 0;
 };
 
 } //namespace

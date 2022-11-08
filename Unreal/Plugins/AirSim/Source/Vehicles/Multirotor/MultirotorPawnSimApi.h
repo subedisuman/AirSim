@@ -25,7 +25,7 @@ public:
     typedef MultirotorPawnEvents::RotorActuatorInfo RotorActuatorInfo;
 
 public:
-    virtual void initialize(std::shared_ptr<DekfSharedResource> dekf_shared_res) override;
+    virtual void initialize() override;
 
     virtual ~MultirotorPawnSimApi() = default;
 
@@ -67,7 +67,7 @@ private:
     std::vector<RotorActuatorInfo> rotor_actuator_info_;
 
     //show info on collision response from physics engine
-    CollisionResponse collision_response;
+    msr::airlib::CollisionResponse collision_response;
 
     MultirotorPawnEvents* pawn_events_;
 
@@ -87,5 +87,5 @@ private:
 
     Pose last_phys_pose_; //for trace lines showing vehicle path
     std::vector<std::string> vehicle_api_messages_;
-    RotorStates rotor_states_;
+    msr::airlib::RotorStates rotor_states_;
 };

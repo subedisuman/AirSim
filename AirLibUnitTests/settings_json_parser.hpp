@@ -12,6 +12,9 @@ STRICT_MODE_ON
 #include <chrono>
 #include "common/AirSimSettings.hpp"
 
+namespace msr::airlib
+{
+
 class SettingsLoader
 {
 public:
@@ -60,3 +63,5 @@ private:
 private:
     std::string settingsText_;
 };
+
+}// namespace

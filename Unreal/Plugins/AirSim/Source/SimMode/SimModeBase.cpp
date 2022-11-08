@@ -17,6 +17,7 @@
 #include "common/EarthCelestial.hpp"
 #include "sensors/lidar/LidarSimple.hpp"
 #include "sensors/distance/DistanceSimple.hpp"
+#include "./Vehicles/Multirotor/MultirotorPawnSimApi.h"
 
 #include "Weather/WeatherLib.h"
 
@@ -792,7 +793,9 @@ std::unique_ptr<PawnSimApi> ASimModeBase::createVehicleSimApi(
 {
     unused(pawn_sim_api_params);
     auto sim_api = std::unique_ptr<PawnSimApi>();
-    sim_api->initialize(dekf_shared_res_);
+    // auto sim_api = static_cast<MultirotorPawnSimApi*>(sim_api);
+    sim_api->preinitialize(dekf_shared_res_);
+    sim_api->initialize();
 
     return sim_api;
 }

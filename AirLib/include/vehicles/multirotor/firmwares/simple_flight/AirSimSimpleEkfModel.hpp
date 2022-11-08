@@ -8,7 +8,7 @@
 #include "firmware/interfaces/IUpdatable.hpp"
 #include "firmware/interfaces/IBoard.hpp"
 
-constexpr float G_0 = EarthUtils::Gravity; // for less than 10000m const gravity is taken
+constexpr float G_0 = msr::airlib::EarthUtils::Gravity; // for less than 10000m const gravity is taken
 constexpr float R_E = EARTH_RADIUS;
 
 namespace msr

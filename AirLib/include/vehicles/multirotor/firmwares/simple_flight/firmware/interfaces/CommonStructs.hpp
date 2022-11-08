@@ -307,7 +307,7 @@ enum class VehicleStateType
 constexpr int NX = 17;
 constexpr int NU = 6;
 constexpr int NW = 13;
-typedef VectorMath::Vector17f VectorNXf;
+typedef msr::airlib::VectorMath::Vector17f VectorNXf;
 // typedef VectorMath::Matrix16x16f MatrixNXxNXf;
 // typedef VectorMath::Matrix12x12f MatrixNWxNWf;
 // typedef VectorMath::Matrix16x12f MatrixNXxNWf;
@@ -317,15 +317,15 @@ typedef VectorMath::Vector17f VectorNXf;
 // typedef VectorMath::Matrix16x3f MatrixNXx3f;
 // typedef VectorMath::Matrix6x16f Matrix6xNXf;
 // typedef VectorMath::Matrix16x6f MatrixNXx6f;
-typedef VectorMath::Matrix17x17f MatrixNXxNXf;
-typedef VectorMath::Matrix13x13f MatrixNWxNWf;
-typedef VectorMath::Matrix17x13f MatrixNXxNWf;
-typedef VectorMath::Matrix1x17f Matrix1xNXf;
-typedef VectorMath::Matrix17x1f MatrixNXx1f;
-typedef VectorMath::Matrix3x17f Matrix3xNXf;
-typedef VectorMath::Matrix17x3f MatrixNXx3f;
-typedef VectorMath::Matrix6x17f Matrix6xNXf;
-typedef VectorMath::Matrix17x6f MatrixNXx6f;
+typedef msr::airlib::VectorMath::Matrix17x17f MatrixNXxNXf;
+typedef msr::airlib::VectorMath::Matrix13x13f MatrixNWxNWf;
+typedef msr::airlib::VectorMath::Matrix17x13f MatrixNXxNWf;
+typedef msr::airlib::VectorMath::Matrix1x17f Matrix1xNXf;
+typedef msr::airlib::VectorMath::Matrix17x1f MatrixNXx1f;
+typedef msr::airlib::VectorMath::Matrix3x17f Matrix3xNXf;
+typedef msr::airlib::VectorMath::Matrix17x3f MatrixNXx3f;
+typedef msr::airlib::VectorMath::Matrix6x17f Matrix6xNXf;
+typedef msr::airlib::VectorMath::Matrix17x6f MatrixNXx6f;
 
 class VehicleState
 {
