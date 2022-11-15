@@ -163,6 +163,7 @@ protected:
     UClass* pip_camera_class;
     UPROPERTY()
     UParticleSystem* collision_display_template;
+    std::shared_ptr<DekfSharedResource> dekf_shared_res_;
 
 private:
     typedef common_utils::Utils Utils;
@@ -208,7 +209,6 @@ private:
     common_utils::UniqueValueMap<std::string, APIPCamera*> external_cameras_;
     std::unique_ptr<UnrealImageCapture> external_image_capture_;
 
-    std::shared_ptr<DekfSharedResource> dekf_shared_res_;
 
     UPROPERTY()
     TArray<AActor*> spawned_actors_; //keep refs alive from Unreal GC

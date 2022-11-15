@@ -69,8 +69,6 @@ ASimModeBase::ASimModeBase()
     if (domain_rand_mat_finder.Succeeded()) {
         domain_rand_material_ = domain_rand_mat_finder.Object;
     }
-
-    dekf_shared_res_ = std::shared_ptr<DekfSharedResource>(new DekfSharedResource());
 }
 
 void ASimModeBase::toggleLoadingScreen(bool is_visible)
@@ -143,6 +141,7 @@ void ASimModeBase::BeginPlay()
 
     UAirBlueprintLib::LogMessage(TEXT("Press F1 to see help"), TEXT(""), LogDebugLevel::Informational);
 
+    dekf_shared_res_ = std::shared_ptr<DekfSharedResource>(new DekfSharedResource());
     setupVehiclesAndCamera();
     FRecordingThread::init();
 
@@ -793,7 +792,6 @@ std::unique_ptr<PawnSimApi> ASimModeBase::createVehicleSimApi(
 {
     unused(pawn_sim_api_params);
     auto sim_api = std::unique_ptr<PawnSimApi>();
-    // auto sim_api = static_cast<MultirotorPawnSimApi*>(sim_api);
     sim_api->preinitialize(dekf_shared_res_);
     sim_api->initialize();
 

@@ -100,6 +100,7 @@ public: //implementation of VehicleSimApiBase
     virtual const msr::airlib::Environment* getGroundTruthEnvironment() const override;
     virtual std::string getRecordFileLine(bool is_header_line) const override;
     virtual void reportState(msr::airlib::StateReporter& reporter) override;
+    std::shared_ptr<DekfSharedResource> dekf_shared_res_;
 
 protected: //additional interface for derived class
     virtual void pawnTick(float dt);
@@ -108,7 +109,7 @@ protected: //additional interface for derived class
     msr::airlib::Kinematics* getKinematics();
     msr::airlib::Environment* getEnvironment();
     typedef msr::airlib::AirSimSettings AirSimSettings;
-    std::shared_ptr<DekfSharedResource> dekf_shared_res_;
+    
 
 public: //Unreal specific methods
     PawnSimApi(const Params& params);

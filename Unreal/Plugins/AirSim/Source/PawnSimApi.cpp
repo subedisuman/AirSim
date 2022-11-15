@@ -22,6 +22,7 @@ PawnSimApi::PawnSimApi(const Params& params)
 void PawnSimApi::preinitialize(std::shared_ptr<DekfSharedResource> dekf_shared_res)
 {
     dekf_shared_res_ = dekf_shared_res;
+    if(dekf_shared_res_ == nullptr) std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << dekf_shared_res_ null in preinitialize of PS API" << std::endl;
 }
 
 void PawnSimApi::initialize()

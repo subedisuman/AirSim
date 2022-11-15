@@ -127,6 +127,7 @@ std::unique_ptr<PawnSimApi> ASimModeWorldMultiRotor::createVehicleSimApi(
     const PawnSimApi::Params& pawn_sim_api_params) const
 {
     auto vehicle_sim_api = std::unique_ptr<PawnSimApi>(new MultirotorPawnSimApi(pawn_sim_api_params));
+    vehicle_sim_api->preinitialize(dekf_shared_res_);
     vehicle_sim_api->initialize();
     //For multirotors the vehicle_sim_api are in PhysicsWOrld container and then get reseted when world gets reseted
     //vehicle_sim_api->reset();
