@@ -17,7 +17,7 @@ namespace airlib
         bool fuse_gps = false;
         bool fuse_baro = false;
         bool fuse_mag = false;
-        bool fuse_pod = false;
+        bool fuse_pod = true;
 
         struct Gyroscope
         {

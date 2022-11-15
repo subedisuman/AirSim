@@ -28,9 +28,10 @@ namespace airlib
     {
     public:
         // Constructor
-        AirSimSimpleEkf(simple_flight::IBoard* board, simple_flight::ICommLink* comm_link, const AirSimSettings::EkfSetting* setting = nullptr, std::shared_ptr<DekfSharedResource> dekf_shared_res = nullptr)
+        AirSimSimpleEkf(simple_flight::IBoard* board, simple_flight::ICommLink* comm_link, std::shared_ptr<DekfSharedResource> dekf_shared_res, const AirSimSettings::EkfSetting* setting = nullptr)
             : board_(board), dekf_shared_res_(dekf_shared_res) // commlink is only temporary here
         {
+            if(dekf_shared_res_ == nullptr) std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << dekf_shared_res_ null in EKF constructor" << std::endl;
             params_.initializeParameters(setting);
             freq_limiter_.initialize(334); // physics engine and the imu refresh at period 3ms ~ 333.33Hz
         }
@@ -237,7 +238,8 @@ namespace airlib
                 gpsUpdate();
             }
             if (params_.fuse_pod) {
-                PODMeasurement();
+                // PODMeasurement();
+                DEKF();
             }
             pseudoMeasurement();
         }
@@ -604,6 +606,67 @@ namespace airlib
             error_covariance_ = error_covariance;
         }
 
+        void DEKF()
+        {
+            if (!board_->checkPODResultsIfNew())
+                return;
+
+            float z_i[2];
+            float R_i[2];
+            bool gps_denied[1];
+
+            if (true)
+            {
+                getPODResultsData(z_i, R_i, gps_denied);
+
+                float u_i = z_i[0]; //calculate these
+
+                std::cout << u_i << std::endl;
+
+                setNeighborData(u_i);
+                float u_j = getNeighborData(u_i);
+
+                // Vector3r lp_center_vec = Vector3r(lp_center[0], lp_center[1], 0.0f);
+                // Vector3r lp_center_var_vec = Vector3r(lp_center_var[0], lp_center_var[1], 0.0f);
+                // simple_flight::VectorNXf states = states_;
+                // simple_flight::MatrixNXxNXf error_covariance = error_covariance_;
+                // AirSimEkfPod::PodUpdate(
+                //     states,
+                //     error_covariance,
+                //     lp_center_vec,
+                //     lp_center_var_vec,
+                //     params_.pod.camera_f_x,
+                //     params_.pod.camera_f_y,
+                //     params_.pod.camera_c_x,
+                //     params_.pod.camera_c_y,
+                //     params_.pod.landing_pad_coordinate);
+
+                // write in the global variables
+                // for (int i = 0; i < 17; i++) {
+                //     states_(i) = u_j;
+                // }
+                // error_covariance_ = error_covariance;
+
+                measurement_(0) = u_j;
+                measurement_(1) = u_j;
+                measurement_(2) = u_j;
+            }
+
+        }
+
+        void setNeighborData(float u_i)
+        {
+            if (u_i < 1.5) dekf_shared_res_->writeDataD1(u_i);
+            if (u_i > 1.5) dekf_shared_res_->writeDataD2(u_i);
+        }
+
+        float getNeighborData(float u_i)
+        {
+            if (u_i < 1.5) return dekf_shared_res_->readDataD2();
+            if (u_i > 1.5) return dekf_shared_res_->readDataD1();
+            return 0.0;
+        }
+
         void eulerAnglesCovariancePropagation()
         {
             // extract the states
@@ -678,9 +741,9 @@ namespace airlib
             // TODO: check if at least a subset of data is valid
 
             // record the measurement signals
-            measurement_(0) = accel[0];
-            measurement_(1) = accel[1];
-            measurement_(2) = accel[2];
+            // measurement_(0) = accel[0];
+            // measurement_(1) = accel[1];
+            // measurement_(2) = accel[2];
             measurement_(3) = gyro[0];
             measurement_(4) = gyro[1];
             measurement_(5) = gyro[2];

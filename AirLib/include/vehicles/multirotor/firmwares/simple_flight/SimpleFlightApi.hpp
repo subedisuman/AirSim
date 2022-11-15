@@ -43,7 +43,9 @@ namespace airlib
             board_.reset(new AirSimSimpleFlightBoard(&params_, vehicle_params_));
             comm_link_.reset(new AirSimSimpleFlightCommLink());
 
-            ekf_.reset(new AirSimSimpleEkf(board_.get(), comm_link_.get(), vehicle_setting->ekf_setting.get(), dekf_shared_res));
+            if(dekf_shared_res == nullptr) std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << dekf_shared_res null in SF API construction" << std::endl;
+
+            ekf_.reset(new AirSimSimpleEkf(board_.get(), comm_link_.get(), dekf_shared_res, vehicle_setting->ekf_setting.get()));
             estimator_.reset(new AirSimSimpleFlightEstimator(ekf_.get()));
 
             //create firmware

@@ -30,6 +30,7 @@ namespace airlib
         }
         virtual std::unique_ptr<MultirotorApiBase> createMultirotorApi(std::shared_ptr<DekfSharedResource> dekf_shared_res) override
         {
+            if(dekf_shared_res == nullptr) std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << dekf_shared_res null in createMultirotorApi of SF Params" << std::endl;
             return std::unique_ptr<MultirotorApiBase>(new SimpleFlightApi(this, vehicle_setting_, dekf_shared_res));
         }
 
