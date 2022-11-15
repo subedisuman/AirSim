@@ -2180,10 +2180,5 @@ class CarClient(VehicleClient, object):
         Returns:
             CarControls:
         """
-<<<<<<< HEAD
-        controls_raw = self.client.call("getCarControls", vehicle_name)
-        return CarControls.from_msgpack(controls_raw)
-=======
         controls_raw = self.client.call('getCarControls', vehicle_name)
         return CarControls.from_msgpack(controls_raw)
->>>>>>> 6688d27d3712c2a9c824ababec7a2703475b6628
