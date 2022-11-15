@@ -2,55 +2,52 @@
 #define DummySharedResource_hpp
 
 #include <mutex>
+#include <memory>
 
 class DekfSharedResource
 {
 public:
     struct Data
     {
-        struct concensus
-        {
-            int q;
-        };
-
-        struct micro_ekf
-        {
-            int x;
-        };
-
-        Data()
-        {
-        }
+        float q = 0.0;
+        float x = 0.0;
     };
 
-    DekfSharedResource(){}
-
-    void writeDataD1()
+    DekfSharedResource()
     {
-        const std::lock_guard<std::mutex> lock(_mutex_d1);
-
+        _data_d1.reset(new Data());
+        _data_d2.reset(new Data());
     }
-    void writeDataD2()
-    {
-        const std::lock_guard<std::mutex> lock(_mutex_d2);
 
+    void writeDataD1(float data)
+    {
+        const std::lock_guard<std::mutex> lock(_mutex);
+        _data_d1->q = data;
     }
-    void readDataD1()
-    {
-        const std::lock_guard<std::mutex> lock(_mutex_d1);
 
+    void writeDataD2(float data)
+    {
+        const std::lock_guard<std::mutex> lock(_mutex);
+        _data_d2->q = data;
     }
-    void readDataD2()
-    {
-        const std::lock_guard<std::mutex> lock(_mutex_d2);
 
+    float readDataD1()
+    {
+        const std::lock_guard<std::mutex> lock(_mutex);
+        return _data_d1->q;
+    }
+
+    float readDataD2()
+    {
+        const std::lock_guard<std::mutex> lock(_mutex);
+        return _data_d2->q;
     }
 
 private:
-    Data _data_d1;
-    Data _data_d2;
-    std::mutex _mutex_d1;
-    std::mutex _mutex_d2;
+    std::unique_ptr<Data> _data_d1;
+    std::unique_ptr<Data> _data_d2;
+    std::mutex _mutex;
+    // std::mutex _mutex_d2;
 
 };
 
