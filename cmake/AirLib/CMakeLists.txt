@@ -30,6 +30,8 @@ add_library(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_sources})
 add_subdirectory(${AIRSIM_ROOT}/../AirSimEkfPod ${AIRSIM_ROOT}/build_AirSimEkfPod)
 target_link_libraries(${PROJECT_NAME} AirSimEkfPod)
 target_include_directories(${PROJECT_NAME} PUBLIC "${AIRSIM_ROOT}/../AirSimEkfPod")
+target_link_libraries(${PROJECT_NAME} AirSimDEkfPod)
+target_include_directories(${PROJECT_NAME} PUBLIC "${AIRSIM_ROOT}/../AirSimDEkfPod")
 # >>
 
 CommonTargetLink()
