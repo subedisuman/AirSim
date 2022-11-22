@@ -22,6 +22,7 @@
 
 #include "PawnEvents.h"
 #include "common/DekfSharedResource.hpp"
+typedef msr::airlib::DekfSharedResource DekfSharedResource;
 
 class PawnSimApi : public msr::airlib::VehicleSimApiBase
 {
