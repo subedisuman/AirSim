@@ -65,6 +65,14 @@ namespace airlib
         typedef Eigen::Matrix<float, 6, 16> Matrix6x16f;
         typedef Eigen::Matrix<float, 16, 6> Matrix16x6f;
 
+        // // d-efk vector definitions
+        // constexpr int NX2 = 34;
+        typedef Eigen::Matrix<float, 34, 1> Vector34f;
+        typedef Eigen::Matrix<float, 34, 34> Matrix34x34f;
+        // typedef Eigen::Matrix<float, 2, NX2> Matrix2x2NXf;
+        // typedef Eigen::Matrix<float, 2, 2> Matrix2x2f;
+        // typedef Eigen::Matrix<float, 2, 1, Eigen::DontAlign> Vector2f;
+
         typedef Eigen::AngleAxisd AngleAxisd;
         typedef Eigen::AngleAxisf AngleAxisf;
 
