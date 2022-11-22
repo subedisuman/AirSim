@@ -327,6 +327,17 @@ typedef msr::airlib::VectorMath::Matrix17x3f MatrixNXx3f;
 typedef msr::airlib::VectorMath::Matrix6x17f Matrix6xNXf;
 typedef msr::airlib::VectorMath::Matrix17x6f MatrixNXx6f;
 
+// d-ekf matrix definitions
+constexpr int NX2 = 34;
+constexpr int NW2 = 12;
+typedef Eigen::Matrix<float, NX2, 1> Vector2NXf;
+typedef Eigen::Matrix<float, NX2, NX2> Matrix2NXx2NXf;
+typedef Eigen::Matrix<float, NX2, NW2> Matrix2NXx2NWf;
+typedef Eigen::Matrix<float, NW2, NW2> Matrix2NWx2NWf;
+typedef Eigen::Matrix<float, 2, NX2> Matrix2x2NXf;
+typedef Eigen::Matrix<float, 2, 2> Matrix2x2f;
+typedef Eigen::Matrix<float, 2, 1, Eigen::DontAlign> Vector2f;
+
 class VehicleState
 {
 public:
