@@ -36,6 +36,8 @@ namespace airlib
         {
             readSettings(*vehicle_setting);
 
+            std::string vehicle_name = vehicle_setting->vehicle_name;
+
             //TODO: set below properly for better high speed safety
             safety_params_.vel_to_breaking_dist = safety_params_.min_breaking_dist = 0;
 
@@ -45,7 +47,7 @@ namespace airlib
 
             if(dekf_shared_res == nullptr) std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << dekf_shared_res null in SF API construction" << std::endl;
 
-            ekf_.reset(new AirSimSimpleEkf(board_.get(), comm_link_.get(), dekf_shared_res, vehicle_setting->ekf_setting.get()));
+            ekf_.reset(new AirSimSimpleEkf(board_.get(), comm_link_.get(), dekf_shared_res, vehicle_name, vehicle_setting->ekf_setting.get()));
             estimator_.reset(new AirSimSimpleFlightEstimator(ekf_.get()));
 
             //create firmware
