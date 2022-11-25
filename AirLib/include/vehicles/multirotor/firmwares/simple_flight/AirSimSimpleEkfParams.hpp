@@ -150,23 +150,23 @@ namespace airlib
 
             float enabled = json.getBool("Enabled", Utils::nan<bool>());
             if (!std::isnan(enabled)) {
-                ekf_enabled = enabled;
+                ekf_enabled = (bool)enabled;
             }
             float gps_fusion = json.getBool("GpsFusion", Utils::nan<bool>());
             if (!std::isnan(gps_fusion)) {
-                fuse_gps = gps_fusion;
+                fuse_gps = (bool)gps_fusion;
             }
             float baro_fusion = json.getBool("BaroFusion", Utils::nan<bool>());
             if (!std::isnan(baro_fusion)) {
-                fuse_baro = baro_fusion;
+                fuse_baro = (bool)baro_fusion;
             }
             float mag_fusion = json.getBool("MagnetoFusion", Utils::nan<bool>());
             if (!std::isnan(mag_fusion)) {
-                fuse_mag = mag_fusion;
+                fuse_mag = (bool)mag_fusion;
             }
             float pod_fusion = json.getBool("PodFusion", Utils::nan<bool>());
             if (!std::isnan(pod_fusion)) {
-                fuse_pod = pod_fusion;
+                fuse_pod = (bool)pod_fusion;
             }
             Settings imu_child;
             if (json.getChild("Imu", imu_child)) {
