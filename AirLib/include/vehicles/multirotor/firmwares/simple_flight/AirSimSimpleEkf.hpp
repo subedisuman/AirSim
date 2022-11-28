@@ -638,7 +638,7 @@ namespace airlib
             // get the full concatenated states for the ego vehicle
             simple_flight::Vector2NXf states_concat_i = simple_flight::Vector2NXf();
             simple_flight::Vector2NXf states_concat_j = getMEkfDataFromNeighbor().x;
-            states_concat_i = states_concat_j;
+            // states_concat_i = states_concat_j;
             for (int i = 0; i < 17; i++)
             {
                 states_concat_i(i) = states_(i);
@@ -649,6 +649,15 @@ namespace airlib
             simple_flight::Matrix2NXx2NXf states_err_cov_concat_i = simple_flight::Matrix2NXx2NXf();
             simple_flight::Matrix2NXx2NXf states_err_cov_concat_j = getMEkfDataFromNeighbor().P;
             states_err_cov_concat_i = P_i_;
+
+            for (int i = 0; i < 17; i++)
+            {
+                for (int j = 0; j < 17; j++)
+                {
+                    states_err_cov_concat_i(i, j) = error_covariance_(i, j);
+                }
+            }
+
             for (int i = 0; i < 17; i++)
             {
                 for (int j = 0; j < 17; j++)
