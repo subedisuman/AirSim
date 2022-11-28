@@ -39,9 +39,21 @@
     <ClInclude Include="CelestialTests.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AirSimSimpleEkfPod.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AirSimSimpleDEkfPod.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AirSimSimpleEkfPod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AirSimSimpleDEkfPod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

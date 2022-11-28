@@ -180,6 +180,17 @@ IF NOT EXIST AirLib\deps\eigen3 (
 IF NOT EXIST AirLib\deps\eigen3 goto :buildfailed
 
 
+REM //---------- copy POD EKF stuff ----------
+copy /Y ..\AirSimEkfPod\AirSimSimpleDEkfPod.hpp AirLib\include\vehicles\multirotor\firmwares\simple_flight\AirSimSimpleDEkfPod.hpp
+copy /Y ..\AirSimEkfPod\AirSimSimpleDEkfPod.cpp AirLib\include\vehicles\multirotor\firmwares\simple_flight\AirSimSimpleDEkfPod.cpp
+copy /Y ..\AirSimEkfPod\AirSimSimpleEkfPod.hpp AirLib\include\vehicles\multirotor\firmwares\simple_flight\AirSimSimpleEkfPod.hpp
+copy /Y ..\AirSimEkfPod\AirSimSimpleEkfPod.cpp AirLib\include\vehicles\multirotor\firmwares\simple_flight\AirSimSimpleEkfPod.cpp
+
+copy /Y ..\AirSimEkfPod\AirSimSimpleDEkfPod.hpp AirLibUnitTests\AirSimSimpleDEkfPod.hpp
+copy /Y ..\AirSimEkfPod\AirSimSimpleDEkfPod.cpp AirLibUnitTests\AirSimSimpleDEkfPod.cpp
+copy /Y ..\AirSimEkfPod\AirSimSimpleEkfPod.hpp AirLibUnitTests\AirSimSimpleEkfPod.hpp
+copy /Y ..\AirSimEkfPod\AirSimSimpleEkfPod.cpp AirLibUnitTests\AirSimSimpleEkfPod.cpp
+
 REM //---------- now we have all dependencies to compile AirSim.sln which will also compile MavLinkCom ----------
 if "%buildMode%" == "" (
 msbuild -maxcpucount:12 /p:Platform=x64 /p:Configuration=Debug AirSim.sln

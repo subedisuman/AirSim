@@ -617,6 +617,7 @@ namespace airlib
             float accel_i[3];
             float gyro_i[3];
             bool is_new_and_valid = getImuData(accel_i, gyro_i);
+            unused(is_new_and_valid);
             auto sending_data = DekfSharedResource::MEkf();
             sending_data.x = states_concat_i_bar_;
             sending_data.P = P_i_;
@@ -714,6 +715,7 @@ namespace airlib
             float accel_i[3];
             float gyro_i[3];
             bool is_new_and_valid = getImuData(accel_i, gyro_i);
+            unused(is_new_and_valid);
             // extract the controls
             for (int i = 0; i < 3; i++) {
                 u_i[i] = accel_i[i];
