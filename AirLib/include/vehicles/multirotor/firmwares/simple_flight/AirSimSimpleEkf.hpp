@@ -607,8 +607,8 @@ namespace airlib
             }
             error_covariance_ = error_covariance;
         }
-
         void DEKF()
+
         {
             if (!board_->checkPODResultsIfNew())
                 return;
@@ -624,6 +624,9 @@ namespace airlib
             sending_data.accel = Vector3r(accel_i[0], accel_i[1], accel_i[2]);
             sending_data.gyro = Vector3r(gyro_i[0], gyro_i[1], gyro_i[2]);
             setMEkfDataToNeighbor(sending_data);
+
+            if (vehicle_name_ == "Drone1" && !dekf_shared_res_->_is_writen_once_mekf_d2) return;
+            if (vehicle_name_ == "Drone2" && !dekf_shared_res_->_is_writen_once_mekf_d1) return;
 
             float pod_result[2];
             float pod_uncertainty[2];
@@ -671,7 +674,8 @@ namespace airlib
             simple_flight::Matrix2NXx2NXf S_i;
 
             // compute the consensus filter outputs y_i and S_i
-            consensusFilter(*front_camera, states_concat_i, z_i, R_i, &y_i, &S_i);
+            bool consensus_not_done = consensusFilter(*front_camera, states_concat_i, z_i, R_i, &y_i, &S_i);
+            if (!consensus_not_done) return;
 
             // compute the M-Ekf filter
             MEkfFilter(states_concat_i, states_err_cov_concat_i, y_i, S_i);
@@ -784,7 +788,7 @@ namespace airlib
 
         }
 
-        void consensusFilter(
+        bool consensusFilter(
             bool front_camera,
             simple_flight::Vector2NXf states_concat_i,
             simple_flight::Vector2f z_i, 
@@ -816,6 +820,9 @@ namespace airlib
             // send the data to the neighbor
             setConsensusDataToNeighbor(sending_data);
 
+            if (vehicle_name_ == "Drone1" && !dekf_shared_res_->_is_writen_once_consensus_d2) return false;
+            if (vehicle_name_ == "Drone2" && !dekf_shared_res_->_is_writen_once_consensus_d1) return false;
+
             // receive the data from the neighbor
             auto received_data = getConsensusDataFromNeighbor();
             simple_flight::Vector2NXf u_j = received_data.u;
@@ -836,6 +843,8 @@ namespace airlib
             // measurement_(0) = u_j;
             // measurement_(1) = u_j;
             // measurement_(2) = u_j;
+
+            return true;
         }
 
         void setConsensusDataToNeighbor(DekfSharedResource::Consensus data)
@@ -859,6 +868,7 @@ namespace airlib
 
         DekfSharedResource::MEkf getMEkfDataFromNeighbor()
         {
+            if(dekf_shared_res_ == nullptr) std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << dekf_shared_res_ null in the EKF getMEkfDataFromNeighbor" << std::endl;
             if (vehicle_name_ == "Drone1") return dekf_shared_res_->readDataMEkfD2();
             if (vehicle_name_ == "Drone2") return dekf_shared_res_->readDataMEkfD1();
             return DekfSharedResource::MEkf();

@@ -4,6 +4,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <memory>
+#include <iostream>
 
 namespace msr
 {
@@ -39,7 +40,7 @@ public:
         _consensus_d1.reset(new Consensus());
         _consensus_d2.reset(new Consensus());
         _mekf_d1.reset(new MEkf());
-        _mekf_d1.reset(new MEkf());
+        _mekf_d2.reset(new MEkf());
         _is_writen_once_consensus_d1 = false;
         _is_writen_once_consensus_d2 = false;
         _is_writen_once_mekf_d1 = false;
@@ -83,15 +84,21 @@ public:
     // read and write of mekf d1
     MEkf readDataMEkfD1()
     {
+        std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << readDataMEkfD1 called" << std::endl;
         std::unique_lock<std::mutex> lock(_mutex_mekf_d1);
         _cv_mekf_d1.wait(lock, [&]{return _is_writen_once_mekf_d1;});
+        std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << readDataMEkfD1 done" << std::endl;
         return *_mekf_d1;
     }
     void writeDataMEkfD1(MEkf data)
     {
         {
+            std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << writeDataMEkfD1 called" << std::endl;
             std::lock_guard<std::mutex> lock(_mutex_mekf_d1);
+            if(_mekf_d1 == nullptr) std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << _mdekf_d2 null in the shared res." << std::endl;
+
             *_mekf_d1 = data;
+            std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << writeDataMEkfD1 done" << std::endl;
             _is_writen_once_mekf_d1 = true;
         }
         _cv_mekf_d1.notify_all();
@@ -100,15 +107,21 @@ public:
     // read and write of mekf d2
     MEkf readDataMEkfD2()
     {
+        std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << readDataMEkfD2 called" << std::endl;
         std::unique_lock<std::mutex> lock(_mutex_mekf_d2);
         _cv_mekf_d2.wait(lock, [&]{return _is_writen_once_mekf_d2;});
+        std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << readDataMEkfD2 done" << std::endl;
         return *_mekf_d2;
     }
     void writeDataMEkfD2(MEkf data)
     {
         {
+            std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << writeDataMEkfD2 called" << std::endl;
             std::lock_guard<std::mutex> lock(_mutex_mekf_d2);
+            if(_mekf_d2 == nullptr) std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << _mdekf_d2 null in the shared res." << std::endl;
+
             *_mekf_d2 = data;
+            std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< <<<<<< <<< << writeDataMEkfD2 done" << std::endl;
             _is_writen_once_mekf_d2 = true;
         }
         _cv_mekf_d2.notify_all();
@@ -127,6 +140,8 @@ private:
     std::condition_variable _cv_consensus_d2;
     std::condition_variable _cv_mekf_d1;
     std::condition_variable _cv_mekf_d2;
+
+public:
     bool _is_writen_once_consensus_d1;
     bool _is_writen_once_consensus_d2;
     bool _is_writen_once_mekf_d1;
