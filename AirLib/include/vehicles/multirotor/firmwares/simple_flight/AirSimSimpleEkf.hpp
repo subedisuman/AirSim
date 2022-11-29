@@ -487,7 +487,7 @@ namespace airlib
         // GPS update
         void gpsUpdate()
         {
-            if (!board_->checkGpsIfNew() || board_->checkIfGpsDenied())
+            if (!board_->checkGpsIfNew())// || board_->checkIfGpsDenied())
                 return;
 
             float pos[3];
