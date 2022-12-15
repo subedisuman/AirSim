@@ -75,6 +75,31 @@ namespace airlib
             assignEkfMeasurementMatrics();
             assignEkfStateMatrics();
             resetGlobalVariables();
+            assignDEkfGlobals();
+        }
+
+        void assignDEkfGlobals()
+        {
+            // prepare the full states concatenation for the ego drone_i
+            // first 17 states would be for the ego drone_i and the latter 17 states would be for the other drone_j
+            states_concat_i_bar_ = simple_flight::Vector2NXf::Zero();
+            for (int i = 0; i < 17; i++)
+            {
+                states_concat_i_bar_(i) = states_(i);
+            }
+            
+            // prepare the full concatenated states-error covariance for the ego vehicle
+            P_i_ = simple_flight::Matrix2NXx2NXf::Zero();
+            for (int i = 0; i < 17; i++)
+            {
+                for (int j = 0; j < 17; j++)
+                {
+                    P_i_(i, j) = 2*error_covariance_(i, j);
+                }
+            }
+
+            q_i_ = simple_flight::Vector2NXf::Zero();
+            X_i_ = simple_flight::Matrix2NXx2NXf::Zero();
         }
 
         void assignEkfMeasurementMatrics()
@@ -84,15 +109,15 @@ namespace airlib
             Q_(0, 0) = params_.accel.std_error.x() * params_.accel.std_error.x();
             Q_(1, 1) = params_.accel.std_error.y() * params_.accel.std_error.y();
             Q_(2, 2) = params_.accel.std_error.z() * params_.accel.std_error.z();
-            Q_(3, 3) = params_.gyro.std_error.x() * params_.gyro.std_error.x();
-            Q_(4, 4) = params_.gyro.std_error.y() * params_.gyro.std_error.y();
-            Q_(5, 5) = params_.gyro.std_error.z() * params_.gyro.std_error.z();
+            Q_(3, 3) = params_.gyro.std_error.x()  * params_.gyro.std_error.x();
+            Q_(4, 4) = params_.gyro.std_error.y()  * params_.gyro.std_error.y();
+            Q_(5, 5) = params_.gyro.std_error.z()  * params_.gyro.std_error.z();
 
             // biases
-            Q_(6, 6) = 0.0001f;
-            Q_(7, 7) = 0.0001f;
-            Q_(8, 8) = 0.0001f;
-            Q_(9, 9) = 0.0001f;
+            Q_(6, 6)   = 0.0001f;
+            Q_(7, 7)   = 0.0001f;
+            Q_(8, 8)   = 0.0001f;
+            Q_(9, 9)   = 0.0001f;
             Q_(10, 10) = 0.0001f;
             Q_(11, 11) = 0.0001f;
             Q_(12, 12) = 0.0001f;
@@ -124,16 +149,16 @@ namespace airlib
             // intialize the ekf states
             states_ = simple_flight::VectorNXf::Zero();
 
-            states_(0) = kinematics_->pose.position.x() - params_.initial_states_err.position.x();
-            states_(1) = kinematics_->pose.position.y() - params_.initial_states_err.position.y();
-            states_(2) = kinematics_->pose.position.z() - params_.initial_states_err.position.z();
-            states_(3) = kinematics_->twist.linear.x() - params_.initial_states_err.linear_velocity.x();
-            states_(4) = kinematics_->twist.linear.y() - params_.initial_states_err.linear_velocity.y();
-            states_(5) = kinematics_->twist.linear.z() - params_.initial_states_err.linear_velocity.z();
-            states_(6) = params_.initial_states_err.quaternion.w();
-            states_(7) = params_.initial_states_err.quaternion.x();
-            states_(8) = params_.initial_states_err.quaternion.y();
-            states_(9) = params_.initial_states_err.quaternion.z();
+            states_(0)  = kinematics_->pose.position.x() - params_.initial_states_err.position.x();
+            states_(1)  = kinematics_->pose.position.y() - params_.initial_states_err.position.y();
+            states_(2)  = kinematics_->pose.position.z() - params_.initial_states_err.position.z();
+            states_(3)  = kinematics_->twist.linear.x() - params_.initial_states_err.linear_velocity.x();
+            states_(4)  = kinematics_->twist.linear.y() - params_.initial_states_err.linear_velocity.y();
+            states_(5)  = kinematics_->twist.linear.z() - params_.initial_states_err.linear_velocity.z();
+            states_(6)  = params_.initial_states_err.quaternion.w();
+            states_(7)  = params_.initial_states_err.quaternion.x();
+            states_(8)  = params_.initial_states_err.quaternion.y();
+            states_(9)  = params_.initial_states_err.quaternion.z();
             states_(10) = params_.initial_states_err.accel_bias.x();
             states_(11) = params_.initial_states_err.accel_bias.y();
             states_(12) = params_.initial_states_err.accel_bias.z();
@@ -144,16 +169,16 @@ namespace airlib
 
             // intitialize the ekf covariances
             error_covariance_ = simple_flight::MatrixNXxNXf::Zero();
-            error_covariance_(0, 0) = static_cast<float>(pow(params_.initial_states_std_err.position.x(), 2));
-            error_covariance_(1, 1) = static_cast<float>(pow(params_.initial_states_std_err.position.y(), 2));
-            error_covariance_(2, 2) = static_cast<float>(pow(params_.initial_states_std_err.position.z(), 2));
-            error_covariance_(3, 3) = static_cast<float>(pow(params_.initial_states_std_err.linear_velocity.x(), 2));
-            error_covariance_(4, 4) = static_cast<float>(pow(params_.initial_states_std_err.linear_velocity.y(), 2));
-            error_covariance_(5, 5) = static_cast<float>(pow(params_.initial_states_std_err.linear_velocity.z(), 2));
-            error_covariance_(6, 6) = static_cast<float>(pow(params_.initial_states_std_err.quaternion.w(), 2));
-            error_covariance_(7, 7) = static_cast<float>(pow(params_.initial_states_std_err.quaternion.x(), 2));
-            error_covariance_(8, 8) = static_cast<float>(pow(params_.initial_states_std_err.quaternion.y(), 2));
-            error_covariance_(9, 9) = static_cast<float>(pow(params_.initial_states_std_err.quaternion.z(), 2));
+            error_covariance_(0, 0)   = static_cast<float>(pow(params_.initial_states_std_err.position.x(), 2));
+            error_covariance_(1, 1)   = static_cast<float>(pow(params_.initial_states_std_err.position.y(), 2));
+            error_covariance_(2, 2)   = static_cast<float>(pow(params_.initial_states_std_err.position.z(), 2));
+            error_covariance_(3, 3)   = static_cast<float>(pow(params_.initial_states_std_err.linear_velocity.x(), 2));
+            error_covariance_(4, 4)   = static_cast<float>(pow(params_.initial_states_std_err.linear_velocity.y(), 2));
+            error_covariance_(5, 5)   = static_cast<float>(pow(params_.initial_states_std_err.linear_velocity.z(), 2));
+            error_covariance_(6, 6)   = static_cast<float>(pow(params_.initial_states_std_err.quaternion.w(), 2));
+            error_covariance_(7, 7)   = static_cast<float>(pow(params_.initial_states_std_err.quaternion.x(), 2));
+            error_covariance_(8, 8)   = static_cast<float>(pow(params_.initial_states_std_err.quaternion.y(), 2));
+            error_covariance_(9, 9)   = static_cast<float>(pow(params_.initial_states_std_err.quaternion.z(), 2));
             error_covariance_(10, 10) = static_cast<float>(pow(params_.initial_states_std_err.accel_bias.x(), 2));
             error_covariance_(11, 11) = static_cast<float>(pow(params_.initial_states_std_err.accel_bias.y(), 2));
             error_covariance_(12, 12) = static_cast<float>(pow(params_.initial_states_std_err.accel_bias.z(), 2));
@@ -240,7 +265,8 @@ namespace airlib
             }
             if (params_.fuse_pod) {
                 // PODMeasurement();
-                DEKF();
+                syncMEkfdata(); // synchronize ekf estimation at every cycle to the dekf shared resource
+                DEKF(); // do dekf only when POD results are available
             }
             pseudoMeasurement();
         }
@@ -607,185 +633,96 @@ namespace airlib
             }
             error_covariance_ = error_covariance;
         }
-        void DEKF()
 
+        void syncMEkfdata()
         {
-            if (!board_->checkPODResultsIfNew())
-                return;
-            
-            // set MEkf data for ego drone
-            float accel_i[3];
-            float gyro_i[3];
-            bool is_new_and_valid = getImuData(accel_i, gyro_i);
-            unused(is_new_and_valid);
+            // set the m-ekf data of the ego drone in the shared resource
             auto sending_data = DekfSharedResource::MEkf();
-            sending_data.x = states_concat_i_bar_;
-            sending_data.P = P_i_;
-            sending_data.accel = Vector3r(accel_i[0], accel_i[1], accel_i[2]);
-            sending_data.gyro = Vector3r(gyro_i[0], gyro_i[1], gyro_i[2]);
-            setMEkfDataToNeighbor(sending_data);
 
-            if (vehicle_name_ == "Drone1" && !dekf_shared_res_->_is_writen_once_mekf_d2) return;
-            if (vehicle_name_ == "Drone2" && !dekf_shared_res_->_is_writen_once_mekf_d1) return;
-
-            float pod_result[2];
-            float pod_uncertainty[2];
-            bool front_camera[1];
-
-            // get the POD results form the front-end
-            getPODResultsData(pod_result, pod_uncertainty, front_camera);
-            simple_flight::Vector2f z_i = simple_flight::Vector2f{pod_result[0], pod_result[1]};
-            simple_flight::Matrix2x2f R_i = simple_flight::Matrix2x2f();
-            R_i(0, 0) = pod_uncertainty[0];
-            R_i(1, 1) = pod_uncertainty[1];
-
-            // get the full concatenated states for the ego vehicle
-            simple_flight::Vector2NXf states_concat_i = simple_flight::Vector2NXf();
-            simple_flight::Vector2NXf states_concat_j = getMEkfDataFromNeighbor().x;
-            // states_concat_i = states_concat_j;
+            // prepare the full states concatenation for the ego drone_i
+            // first 17 states would be for the ego drone_i and the latter 17 states would be for the other drone_j
+            simple_flight::Vector2NXf states_concat_i = simple_flight::Vector2NXf(); // states concatenation of the ego drone_i
             for (int i = 0; i < 17; i++)
             {
                 states_concat_i(i) = states_(i);
-                states_concat_i(i+17) = states_concat_j(i);
             }
             
-            // get the full concatenated states-error covariance for the ego vehicle
+            // prepare the full concatenated states-error covariance for the ego vehicle
             simple_flight::Matrix2NXx2NXf states_err_cov_concat_i = simple_flight::Matrix2NXx2NXf();
-            simple_flight::Matrix2NXx2NXf states_err_cov_concat_j = getMEkfDataFromNeighbor().P;
-            states_err_cov_concat_i = P_i_;
-
             for (int i = 0; i < 17; i++)
             {
                 for (int j = 0; j < 17; j++)
                 {
-                    states_err_cov_concat_i(i, j) = error_covariance_(i, j);
+                    states_err_cov_concat_i(i, j) = 2*error_covariance_(i, j);
                 }
             }
 
-            for (int i = 0; i < 17; i++)
-            {
-                for (int j = 0; j < 17; j++)
-                {
-                    states_err_cov_concat_i(i+17, j+17) = states_err_cov_concat_j(i, j);
-                }
-            }
-
-            simple_flight::Vector2NXf y_i;
-            simple_flight::Matrix2NXx2NXf S_i;
-
-            // compute the consensus filter outputs y_i and S_i
-            bool consensus_not_done = consensusFilter(*front_camera, states_concat_i, z_i, R_i, &y_i, &S_i);
-            if (!consensus_not_done) return;
-
-            // compute the M-Ekf filter
-            MEkfFilter(states_concat_i, states_err_cov_concat_i, y_i, S_i);
-        }
-
-        void MEkfFilter(
-            simple_flight::Vector2NXf states_concat_i, 
-            simple_flight::Matrix2NXx2NXf states_err_cov_concat_i, 
-            simple_flight::Vector2NXf y_i, 
-            simple_flight::Matrix2NXx2NXf S_i)
-        {
-            simple_flight::Matrix2NXx2NXf M_i = (P_i_.inverse() + S_i).inverse();
-            simple_flight::Vector2NXf states_concat_i_hat = states_concat_i + M_i*(y_i - S_i*states_concat_i);
-            
-            // declare local variables
-            float x_i[simple_flight::NX];
-            float u_i[simple_flight::NU];
-            float x_j[simple_flight::NX];
-            float u_j[simple_flight::NU];
-            simple_flight::MatrixNXxNXf A_i;
-            simple_flight::MatrixNXxNXf A_j;
-            simple_flight::MatrixNXxNWf B_w_i;
-            simple_flight::MatrixNXxNWf B_w_j;
-            simple_flight::MatrixNXxNXf Phi_i;
-            simple_flight::MatrixNXxNXf Phi_j;
-            simple_flight::MatrixNXxNWf GammaB_w_i;
-            simple_flight::MatrixNXxNWf GammaB_w_j;
-            // simple_flight::MatrixNXxNXf P = error_covariance_;
-            // simple_flight::MatrixNXxNXf next_covariance;
-
-            // extract the ekf states of ego vehicle
-            for (int i = 0; i < simple_flight::NX; i++) {
-                x_i[i] = states_concat_i_hat(i);
-            }
-
-            // extract the ekf states of other vehicle
-            for (int i = 0; i < simple_flight::NX; i++) {
-                x_j[i] = states_concat_i_hat(i+simple_flight::NX);
-            }
-
+            // prepare the accel and gyro measurements to set them in mekf data
             float accel_i[3];
             float gyro_i[3];
             bool is_new_and_valid = getImuData(accel_i, gyro_i);
             unused(is_new_and_valid);
-            // extract the controls
-            for (int i = 0; i < 3; i++) {
-                u_i[i] = accel_i[i];
-                u_i[i + 3] = gyro_i[i];
-            }
 
-            Vector3r accel_j = getMEkfDataFromNeighbor().accel;
-            Vector3r gyro_j = getMEkfDataFromNeighbor().gyro;
-            // extract the controls
-            for (int i = 0; i < 3; i++) {
-                u_j[i] = accel_j(i);
-                u_j[i + 3] = gyro_j(i);
-            }
+            sending_data.x = states_concat_i;
+            sending_data.P = states_err_cov_concat_i;
+            sending_data.accel = Vector3r(accel_i[0], accel_i[1], accel_i[2]);
+            sending_data.gyro = Vector3r(gyro_i[0], gyro_i[1], gyro_i[2]);
+            setMEkfData(sending_data);
+        }
 
-            // evaluate A and B matrix for ego vehcile
-            evaluateA(&A_i, x_i, u_i);
-            evaluateB_w(&B_w_i, x_i, u_i);
-            // evaluate A and B matrix for other vehicle
-            evaluateA(&A_j, x_j, u_j);
-            evaluateB_w(&B_w_j, x_j, u_j);
+        void DEKF()
+        {
+            if (!board_->checkPODResultsIfNew())
+                return;
 
-            evaluatePhiAndGamma_w(&Phi_i, &GammaB_w_i, &B_w_i, &A_i, dt_dekf_);
-            evaluatePhiAndGamma_w(&Phi_j, &GammaB_w_j, &B_w_j, &A_j, dt_dekf_);
-
-            simple_flight::Matrix2NXx2NXf Phi;
-            for (int i = 0; i < simple_flight::NX; i++)
+            // check if the other drone has written something in the shared resource
+            if ((vehicle_name_ == "Drone1" && dekf_shared_res_->_is_writen_once_mekf_d2)
+               ||(vehicle_name_ == "Drone2" && dekf_shared_res_->_is_writen_once_mekf_d1))
             {
-                for (int j = 0; j < simple_flight::NX; j++)
+                // get POD results from the front-end
+                float pod_result[2];
+                float pod_uncertainty[2];
+                bool front_camera[1];
+                // get the POD results form the front-end
+                getPODResultsData(pod_result, pod_uncertainty, front_camera);
+                simple_flight::Vector2f z_i = simple_flight::Vector2f{pod_result[0], pod_result[1]};
+                simple_flight::Matrix2x2f R_i = simple_flight::Matrix2x2f();
+                R_i(0, 0) = pod_uncertainty[0];
+                R_i(1, 1) = pod_uncertainty[1];
+
+                // prepare the full states concatenation for the ego drone_i
+                // first 17 states would be for the ego drone_i and the latter 17 states would be for the other drone_j
+                simple_flight::Vector2NXf states_concat_i; // states concatenation of the ego drone_i
+                simple_flight::Vector2NXf states_concat_j = getMEkfDataFromNeighbor().x;
+                for (int i = 0; i < 17; i++)
                 {
-                    Phi(i, j) = Phi_i(i,j);
-                    Phi(i+simple_flight::NX, j+simple_flight::NX) = Phi_j(i,j);
+                    states_concat_i(i) = states_(i);
+                    states_concat_i(i+17) = states_concat_j(i);
                 }
-            }
-            simple_flight::Matrix2NXx2NWf GammaB_w;
-            for (int i = 0; i < simple_flight::NX; i++)
-            {
-                for (int j = 0; j < simple_flight::NW; j++)
+                
+                // prepare the full concatenated states-error covariance for the ego vehicle
+                simple_flight::Matrix2NXx2NXf states_err_cov_concat_i = P_i_;
+                simple_flight::Matrix2NXx2NXf states_err_cov_concat_j = getMEkfDataFromNeighbor().P;
+                for (int i = 0; i < 17; i++)
                 {
-                    GammaB_w(i, j) = GammaB_w_i(i,j);
-                    GammaB_w(i+simple_flight::NX, j+simple_flight::NW) = GammaB_w_j(i,j);
+                    for (int j = 0; j < 17; j++)
+                    {
+                        states_err_cov_concat_i(i, j) = 2*error_covariance_(i, j);
+                        states_err_cov_concat_i(i+17, j+17) = states_err_cov_concat_j(i, j);
+                    }
                 }
-            }
-            
-            simple_flight::Matrix2NWx2NWf Q;
-            for (int i = 0; i < simple_flight::NW; i++)
-            {
-                Q(i, i) = Q_(i, i);
-                Q(i+simple_flight::NW, i+simple_flight::NW) = Q_(i, i);
-            }
 
-            // evaluate next covariance matrix and states vector
-            P_i_ = Phi * M_i * Phi.transpose() + GammaB_w * Q * GammaB_w.transpose();
-            states_concat_i_bar_ = Phi * states_concat_i_hat;
+                // create the outputs of the consensus filter
+                simple_flight::Vector2NXf y_i;
+                simple_flight::Matrix2NXx2NXf S_i;
 
-            for (int i = 0; i < simple_flight::NX; i++)
-            {
-                states_(i) = states_concat_i_bar_(i);
-            }
-            for (int i = 0; i < simple_flight::NX; i++)
-            {
-                for (int j = 0; j < simple_flight::NX; j++)
-                {
-                    error_covariance_(i, j) = P_i_(i, j);
-                }
-            }
+                // compute the consensus filter outputs y_i and S_i
+                bool consensus_done = consensusFilter(*front_camera, states_concat_i, z_i, R_i, &y_i, &S_i);
+                if (!consensus_done) return;
 
+                // compute the M-Ekf filter
+                MEkfFilter(states_concat_i, states_err_cov_concat_i, y_i, S_i);
+            }
         }
 
         bool consensusFilter(
@@ -797,7 +734,7 @@ namespace airlib
             simple_flight::Matrix2NXx2NXf* S_i)
         {    
             simple_flight::Matrix2x2NXf C_Pod;
-            AirSimDEkfPod::evaluateCPod(
+            AirSimDEkfPod::evaluateHPod(
                 &C_Pod,
                 front_camera,
                 states_concat_i,
@@ -818,36 +755,147 @@ namespace airlib
             sending_data.X = X_i_;
 
             // send the data to the neighbor
-            setConsensusDataToNeighbor(sending_data);
+            setConsensusData(sending_data);
 
-            if (vehicle_name_ == "Drone1" && !dekf_shared_res_->_is_writen_once_consensus_d2) return false;
-            if (vehicle_name_ == "Drone2" && !dekf_shared_res_->_is_writen_once_consensus_d1) return false;
+            // return if the other vehicle has no data in the shared resource
+            if ((vehicle_name_ == "Drone1" && dekf_shared_res_->_is_writen_once_consensus_d2)
+                || (vehicle_name_ == "Drone2" && dekf_shared_res_->_is_writen_once_consensus_d1))
+            {
+                // receive the data from the neighbor
+                auto received_data = getConsensusDataFromNeighbor();
+                simple_flight::Vector2NXf u_j = received_data.u;
+                simple_flight::Matrix2NXx2NXf U_j = received_data.U;
+                simple_flight::Vector2NXf q_j = received_data.q;
+                simple_flight::Matrix2NXx2NXf X_j = received_data.X;
 
-            // receive the data from the neighbor
-            auto received_data = getConsensusDataFromNeighbor();
-            simple_flight::Vector2NXf u_j = received_data.u;
-            simple_flight::Matrix2NXx2NXf U_j = received_data.U;
-            simple_flight::Vector2NXf q_j = received_data.q;
-            simple_flight::Matrix2NXx2NXf X_j = received_data.X;
+                // do data consensus filtering
+                q_i_ += q_j - q_i_ + u_j - u_i;
 
-            // do data consensus filterings
-            q_i_ += q_j - q_i_ + u_j - u_i;
+                // do uncertainty consensus filtering
+                X_i_ += X_j - X_i_ + U_j - U_i;
 
-            // do uncertainty consensus filtering
-            X_i_ += X_j - X_i_ + U_j - U_i;
+                // assign the outputs of the consensus filter to the pointers
+                (*y_i) = u_i + q_i_;
+                (*S_i) = U_i + X_i_;
 
-            // assign the outputs of the consensus filter to the pointers
-            (*y_i) = u_i + q_i_;
-            (*S_i) = U_i + X_i_;
-
-            // measurement_(0) = u_j;
-            // measurement_(1) = u_j;
-            // measurement_(2) = u_j;
-
-            return true;
+                return true;
+            }
+            return false;
         }
 
-        void setConsensusDataToNeighbor(DekfSharedResource::Consensus data)
+        void MEkfFilter(
+            simple_flight::Vector2NXf states_concat_i, 
+            simple_flight::Matrix2NXx2NXf states_err_cov_concat_i, 
+            simple_flight::Vector2NXf y_i, 
+            simple_flight::Matrix2NXx2NXf S_i)
+        {
+            // compute M_i and states_concat_i_hat
+            simple_flight::Matrix2NXx2NXf M_i = (states_err_cov_concat_i.inverse() + S_i).inverse();
+            simple_flight::Vector2NXf states_concat_i_hat = states_concat_i + M_i*(y_i - S_i*states_concat_i);
+            
+            // declare local variables
+            float x_i[simple_flight::NX];
+            float u_i[simple_flight::NU];
+            float x_j[simple_flight::NX];
+            float u_j[simple_flight::NU];
+            simple_flight::MatrixNXxNXf A_i;
+            simple_flight::MatrixNXxNXf A_j;
+            simple_flight::MatrixNXxNWf B_w_i;
+            simple_flight::MatrixNXxNWf B_w_j;
+            simple_flight::MatrixNXxNXf Phi_i;
+            simple_flight::MatrixNXxNXf Phi_j;
+            simple_flight::MatrixNXxNWf GammaB_w_i;
+            simple_flight::MatrixNXxNWf GammaB_w_j;
+
+            // extract the ekf states of ego vehicle
+            for (int i = 0; i < simple_flight::NX; i++) {
+                x_i[i] = states_concat_i_hat(i);
+            }
+
+            // extract the ekf states of other vehicle
+            for (int i = 0; i < simple_flight::NX; i++) {
+                x_j[i] = states_concat_i_hat(i+simple_flight::NX);
+            }
+
+            // extract the accel and gyro inputs for the ego vehicle
+            float accel_i[3];
+            float gyro_i[3];
+            bool is_new_and_valid = getImuData(accel_i, gyro_i);
+            unused(is_new_and_valid);
+            // extract the controls
+            for (int i = 0; i < 3; i++) {
+                u_i[i] = accel_i[i];
+                u_i[i + 3] = gyro_i[i];
+            }
+
+            // extract the accel and gyro inputs for the other vehicle
+            Vector3r accel_j = getMEkfDataFromNeighbor().accel;
+            Vector3r gyro_j = getMEkfDataFromNeighbor().gyro;
+            // extract the controls
+            for (int i = 0; i < 3; i++) {
+                u_j[i] = accel_j(i);
+                u_j[i + 3] = gyro_j(i);
+            }
+
+            // evaluate A and B matrix for ego vehcile
+            evaluateA(&A_i, x_i, u_i);
+            evaluateB_w(&B_w_i, x_i, u_i);
+            // evaluate A and B matrix for other vehicle
+            evaluateA(&A_j, x_j, u_j);
+            evaluateB_w(&B_w_j, x_j, u_j);
+
+            // evaluate Phi and Gamma_w (the discrete time A and B vectors for ego and other drone)
+            evaluatePhiAndGamma_w(&Phi_i, &GammaB_w_i, &B_w_i, &A_i, dt_dekf_);
+            evaluatePhiAndGamma_w(&Phi_j, &GammaB_w_j, &B_w_j, &A_j, dt_dekf_);
+
+            // concatenate Phi for both the vehicles
+            simple_flight::Matrix2NXx2NXf Phi;
+            for (int i = 0; i < simple_flight::NX; i++)
+            {
+                for (int j = 0; j < simple_flight::NX; j++)
+                {
+                    Phi(i, j) = Phi_i(i,j);
+                    Phi(i+simple_flight::NX, j+simple_flight::NX) = Phi_j(i,j);
+                }
+            }
+
+            // concatenate GammaB_w for both the vehicles
+            simple_flight::Matrix2NXx2NWf GammaB_w;
+            for (int i = 0; i < simple_flight::NX; i++)
+            {
+                for (int j = 0; j < simple_flight::NW; j++)
+                {
+                    GammaB_w(i, j) = GammaB_w_i(i,j);
+                    GammaB_w(i+simple_flight::NX, j+simple_flight::NW) = GammaB_w_j(i,j);
+                }
+            }
+            
+            // concatenate Q for both the vehicles
+            simple_flight::Matrix2NWx2NWf Q;
+            for (int i = 0; i < simple_flight::NW; i++)
+            {
+                Q(i, i) = Q_(i, i);
+                Q(i+simple_flight::NW, i+simple_flight::NW) = Q_(i, i);
+            }
+
+            // evaluate the next covariance matrix and states vector
+            P_i_ = Phi * M_i * Phi.transpose() + GammaB_w * Q * GammaB_w.transpose();
+            states_concat_i_bar_ = Phi * states_concat_i_hat;
+
+            for (int i = 0; i < simple_flight::NX; i++)
+            {
+                states_(i) = states_concat_i_bar_(i);
+            }
+            for (int i = 0; i < simple_flight::NX; i++)
+            {
+                for (int j = 0; j < simple_flight::NX; j++)
+                {
+                    error_covariance_(i, j) = P_i_(i, j);
+                }
+            }
+        }
+
+        void setConsensusData(DekfSharedResource::Consensus data)
         {
             if (vehicle_name_ == "Drone1") dekf_shared_res_->writeDataConsensusD1(data);
             if (vehicle_name_ == "Drone2") dekf_shared_res_->writeDataConsensusD2(data);
@@ -860,7 +908,7 @@ namespace airlib
             return DekfSharedResource::Consensus();
         }
 
-        void setMEkfDataToNeighbor(DekfSharedResource::MEkf data)
+        void setMEkfData(DekfSharedResource::MEkf data)
         {
             if (vehicle_name_ == "Drone1") dekf_shared_res_->writeDataMEkfD1(data);
             if (vehicle_name_ == "Drone2") dekf_shared_res_->writeDataMEkfD2(data);
